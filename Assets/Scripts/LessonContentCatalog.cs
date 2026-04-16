@@ -1,33 +1,91 @@
 public static class LessonContentCatalog
 {
+    public struct LessonEntry
+    {
+        public string Label;
+        public string Title;
+        public string Description;
+
+        public LessonEntry(string label, string title, string description)
+        {
+            Label = label;
+            Title = title;
+            Description = description;
+        }
+    }
+
     public const string LessonTitle = "Bài 13: Hai mặt phẳng song song";
 
-    public static readonly string[] LessonLabels =
+    // Edit this list only when building new chapters/lessons.
+    // Runtime/UI will automatically read from here.
+    public static readonly LessonEntry[] Lessons =
     {
-        "1) Lesson 1",
-        "2) Lesson 2.1",
-        "3) Lesson 2",
-        "4) Lesson 3",
-        "5) Lesson 4"
+        new LessonEntry(
+            "1) Lesson 1",
+            "Lesson 1",
+            Module1LectureContent + "\n\n" + Module1InteractiveContent),
+        new LessonEntry(
+            "2) Lesson 2.1",
+            "Lesson 2.1 - Giao tuyến (Mô phỏng 3D)",
+            "Lesson 2.1 - Giao tuyến hai mặt phẳng (Mô phỏng 3D)\n\n" +
+            "Mục tiêu:\n" +
+            "• Trực quan giao tuyến của hai mặt phẳng trong không gian.\n" +
+            "• Quan sát sự thay đổi vị trí/định hướng và kết luận về đường giao tuyến.\n\n" +
+            "Nội dung mô phỏng:\n" +
+            Module2LectureContent),
+        new LessonEntry(
+            "3) Lesson 2.2",
+            "Lesson 2.2 - Giao tuyến",
+            "Lesson 2.2 - Giao tuyến hai mặt phẳng (Tương tác)\n\n" +
+            "Mục tiêu:\n" +
+            "• Người học trực tiếp xoay mặt phẳng để làm thay đổi giao tuyến.\n" +
+            "• So sánh các trạng thái giao tuyến khi góc nghiêng thay đổi.\n\n" +
+            "Nội dung thực hành:\n" +
+            Module2PracticeContent),
+        new LessonEntry(
+            "4) Lesson 3",
+            "Lesson 3 - Tỷ số đồng nhất",
+            "Bài giảng tỷ số đồng nhất:\n\n" + Module3LectureContent + "\n\n" + Module3PracticeContent),
+        new LessonEntry(
+            "5) Lesson 4",
+            "Lesson 4 - Hình lăng trụ",
+            "Bài giảng hình lăng trụ:\n\n" + Module4LectureContent)
     };
 
-    public static readonly string[] LessonTitles =
-    {
-        "Lesson 1",
-        "Lesson 2.1",
-        "Lesson 2",
-        "Lesson 3",
-        "Lesson 4"
-    };
+    public static readonly string[] LessonLabels = BuildLabels();
 
-    public static readonly string[] LessonDescriptions =
+    public static readonly string[] LessonTitles = BuildTitles();
+
+    public static readonly string[] LessonDescriptions = BuildDescriptions();
+
+    public static int LessonCount => Lessons.Length;
+
+    public static LessonEntry GetLesson(int index)
     {
-        Module1LectureContent + "\n\n" + Module1InteractiveContent,
-        Module2LectureContent + "\n\n" + Module2PracticeContent,
-        Module3LectureContent + "\n\n" + Module3PracticeContent,
-        Module4LectureContent + "\n\n" + Module4PracticeContent,
-        SidebarModules + "\n\n" + "Chọn bài giảng để hiển thị mô hình prefab tương ứng."
-    };
+        if (index < 0 || index >= Lessons.Length) return default;
+        return Lessons[index];
+    }
+
+    private static string[] BuildLabels()
+    {
+        string[] labels = new string[Lessons.Length];
+        for (int i = 0; i < Lessons.Length; i++) labels[i] = Lessons[i].Label;
+        return labels;
+    }
+
+    private static string[] BuildTitles()
+    {
+        string[] titles = new string[Lessons.Length];
+        for (int i = 0; i < Lessons.Length; i++) titles[i] = Lessons[i].Title;
+        return titles;
+    }
+
+    private static string[] BuildDescriptions()
+    {
+        string[] descriptions = new string[Lessons.Length];
+        for (int i = 0; i < Lessons.Length; i++) descriptions[i] = Lessons[i].Description;
+        return descriptions;
+    }
 
     public const string SidebarModules =
         "Danh sách module\n" +
@@ -69,7 +127,6 @@ public static class LessonContentCatalog
         "• Quan sát hai giao tuyến màu vàng trượt theo bề mặt.\n" +
         "• Theo dõi đồng hồ đo khoảng cách ảo (Data Tracker).\n\n" +
         "Phản hồi mong đợi:\n" +
-        "• Khoảng cách giữa hai giao tuyến luôn là hằng số (ví dụ d = 1.5).\n" +
         "• Xác minh thành công: Giao tuyến luôn song song.";
 
     public const string Module3Title = "Module 3: Định lí Thalès trong không gian";

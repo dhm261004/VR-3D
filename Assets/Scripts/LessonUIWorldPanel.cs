@@ -47,14 +47,22 @@ public class LessonUIWorldPanel : MonoBehaviour
 
     public void SetModuleTitleLabels(string[] labels)
     {
-        if (labels == null) return;
-
-        int count = Mathf.Min(labels.Length, moduleTitles.Length);
-        for (int i = 0; i < count; i++)
+        if (labels == null) labels = new string[0];
+        for (int i = 0; i < moduleTitles.Length; i++)
         {
-            if (moduleTitles[i] != null && moduleTitles[i].label != null)
-                moduleTitles[i].label.text = labels[i];
+            ModuleTitleItem item = moduleTitles[i];
+            if (item == null || item.label == null) continue;
+
+            bool hasData = i < labels.Length;
+            item.label.text = hasData ? labels[i] : string.Empty;
+            item.label.gameObject.SetActive(hasData);
+
+            if (item.background != null) item.background.gameObject.SetActive(hasData);
+            if (item.leftIndicator != null) item.leftIndicator.gameObject.SetActive(hasData);
         }
+
+        if (labels.Length > moduleTitles.Length)
+            Debug.LogWarning($"LessonUIWorldPanel: Only {moduleTitles.Length} title slots assigned, but catalog has {labels.Length} lessons.");
     }
 
     public void SetActiveModule(int activeIndex)
@@ -64,7 +72,8 @@ public class LessonUIWorldPanel : MonoBehaviour
             ModuleTitleItem item = moduleTitles[i];
             if (item == null || item.label == null) continue;
 
-            bool isActive = i == activeIndex;
+            bool isVisible = item.label.gameObject.activeSelf;
+            bool isActive = isVisible && i == activeIndex;
             item.label.color = isActive ? moduleActiveTextColor : moduleInactiveTextColor;
             item.label.fontStyle = isActive ? FontStyles.Bold : FontStyles.Normal;
             item.label.fontSize = isActive ? activeFontSize : inactiveFontSize;
