@@ -41,9 +41,9 @@ public class module3_lythuyet : MonoBehaviour
 
         // 3. Khởi tạo 3 Mặt phẳng song song cách đều nhau
         // Alpha: Y = 1.0, Beta: Y = 0.0, Gamma: Y = -1.0
-        GameObject faceAlpha = CreatePlane(1.0f, alphaColor, "α");
-        GameObject faceBeta = CreatePlane(0.0f, betaColor, "β");
-        GameObject faceGamma = CreatePlane(-1.0f, gammaColor, "γ");
+        GameObject faceAlpha = CreatePlane(1.0f, alphaColor, "(P)");
+        GameObject faceBeta = CreatePlane(0.0f, betaColor, "(Q)");
+        GameObject faceGamma = CreatePlane(-1.0f, gammaColor, "(R)");
         
         yield return new WaitForSeconds(1f);
         uiStatusText.text = "Tạo tia sáng cắt qua 3 mặt phẳng...";

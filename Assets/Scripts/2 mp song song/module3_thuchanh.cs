@@ -28,9 +28,9 @@ public class module3_thuchanh : MonoBehaviour
         Color rodColor = new Color32(255, 100, 100, 255);
 
         // Khởi tạo 3 Mặt phẳng song song
-        CreatePlane(1.0f, alphaColor, "α");
-        CreatePlane(0.0f, betaColor, "β");
-        CreatePlane(-1.0f, gammaColor, "γ");
+        CreatePlane(1.0f, alphaColor, "(P)");
+        CreatePlane(0.0f, betaColor, "(Q)");
+        CreatePlane(-1.0f, gammaColor, "(R)");
 
         // Khởi tạo tia sáng 1 (Laser cố định)
         GameObject l1p1 = GeoFactory.CreatePoint(new Vector3(-1.5f, 2.0f, 3.0f), highlightColor, " ", false);

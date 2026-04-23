@@ -27,7 +27,7 @@ public class module2_thuchanh : MonoBehaviour
         // 2. Dựng Mặt phẳng Alpha (Y = 0.6) và Beta (Y = -0.4)
         GameObject a1 = GeoFactory.CreatePoint(new Vector3(-2, 0.6f, 1.5f), alphaColor, " ", false);
         GameObject a2 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 1.5f), alphaColor, " ", false);
-        GameObject a3 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 4.5f), alphaColor, "α", false);
+        GameObject a3 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 4.5f), alphaColor, "(P)", false);
         GameObject a4 = GeoFactory.CreatePoint(new Vector3(-2, 0.6f, 4.5f), alphaColor, " ", false);
         a1.transform.localScale = a2.transform.localScale = a3.transform.localScale = a4.transform.localScale = Vector3.one * 0.04f;
         GameObject faceAlpha = GeoFactory.CreateFace(new GameObject[] { a1, a2, a3, a4 }, alphaColor);
@@ -35,7 +35,7 @@ public class module2_thuchanh : MonoBehaviour
 
         GameObject b1 = GeoFactory.CreatePoint(new Vector3(-2, -0.4f, 1.5f), betaColor, " ", false);
         GameObject b2 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 1.5f), betaColor, " ", false);
-        GameObject b3 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 4.5f), betaColor, "β", false);
+        GameObject b3 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 4.5f), betaColor, "(Q)", false);
         GameObject b4 = GeoFactory.CreatePoint(new Vector3(-2, -0.4f, 4.5f), betaColor, " ", false);
         b1.transform.localScale = b2.transform.localScale = b3.transform.localScale = b4.transform.localScale = Vector3.one * 0.04f;
         GameObject faceBeta = GeoFactory.CreateFace(new GameObject[] { b1, b2, b3, b4 }, betaColor);

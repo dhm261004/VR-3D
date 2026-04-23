@@ -18,7 +18,7 @@ public class Module1 : MonoBehaviour
         // 2. Dựng Mặt phẳng Alpha (Y = 0.6) lơ lửng cách người dùng 3m
         GameObject a1 = GeoFactory.CreatePoint(new Vector3(-2, 0.6f, 1.5f), alphaColor, " ", false);
         GameObject a2 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 1.5f), alphaColor, " ", false);
-        GameObject a3 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 4.5f), alphaColor, "α", false);
+        GameObject a3 = GeoFactory.CreatePoint(new Vector3( 2, 0.6f, 4.5f), alphaColor, "(P)", false);
         GameObject a4 = GeoFactory.CreatePoint(new Vector3(-2, 0.6f, 4.5f), alphaColor, " ", false);
         
         a1.transform.DOScale(0.04f, 0.5f); a2.transform.DOScale(0.04f, 0.5f);
@@ -33,7 +33,7 @@ public class Module1 : MonoBehaviour
         // 3. Dựng Mặt phẳng Beta (Y = -0.4) lơ lửng song song bên dưới
         GameObject b1 = GeoFactory.CreatePoint(new Vector3(-2, -0.4f, 1.5f), betaColor, " ", false);
         GameObject b2 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 1.5f), betaColor, " ", false);
-        GameObject b3 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 4.5f), betaColor, "β", false);
+        GameObject b3 = GeoFactory.CreatePoint(new Vector3( 2, -0.4f, 4.5f), betaColor, "(Q)", false);
         GameObject b4 = GeoFactory.CreatePoint(new Vector3(-2, -0.4f, 4.5f), betaColor, " ", false);
         
         b1.transform.DOScale(0.04f, 0.5f); b2.transform.DOScale(0.04f, 0.5f);

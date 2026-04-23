@@ -45,8 +45,8 @@ public class module4_thuchanh : MonoBehaviour
         Color betaColor = new Color32(0, 255, 150, 100);
 
         // Khởi tạo 2 Mặt phẳng song song
-        CreatePlane(1.2f, alphaColor, "α");
-        CreatePlane(-0.8f, betaColor, "β");
+        CreatePlane(1.2f, alphaColor, "(P)");
+        CreatePlane(-0.8f, betaColor, "(Q)");
 
         // Tính toán đa giác đều đáy (Tam giác đều)
         Vector3 center = new Vector3(0, -0.8f, 2.5f);

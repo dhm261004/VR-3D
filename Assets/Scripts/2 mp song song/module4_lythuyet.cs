@@ -20,8 +20,8 @@ public class module4_lythuyet : MonoBehaviour
 
         // 2. Khởi tạo 2 Mặt phẳng song song
         // Alpha: Y = 1.2, Beta: Y = -0.8
-        CreatePlane(1.2f, alphaColor, "α");
-        CreatePlane(-0.8f, betaColor, "β");
+        CreatePlane(1.2f, alphaColor, "(P)");
+        CreatePlane(-0.8f, betaColor, "(Q)");
         
         yield return new WaitForSeconds(1.0f);
 
