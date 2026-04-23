@@ -62,7 +62,7 @@ public class module2_thuchanh : MonoBehaviour
 
         // 5. Khởi tạo Cần gạt Vật lý (Interactive Point)
         // isDraggable = true cho phép VR lấy con trỏ kéo thả được
-        lever = GeoFactory.CreatePoint(new Vector3(0f, 1.3f, 3.0f), new Color32(255, 50, 50, 255), "CẦN GẠT", true);
+        lever = GeoFactory.CreatePointVR(new Vector3(0f, 1.3f, 3.0f), new Color32(255, 50, 50, 255), "CẦN GẠT", true);
         lever.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 
         // 6. Khởi tạo UI (Top Left Panel)

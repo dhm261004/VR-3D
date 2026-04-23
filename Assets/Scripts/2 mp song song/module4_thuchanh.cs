@@ -6,6 +6,8 @@ using TMPro;
 public class module4_thuchanh : MonoBehaviour
 {
     private int state = 0;
+    private TextMeshPro uiStatusText;
+    private bool prevVRButtonPressed = false;
     
     // Points
     private Vector3 posA, posB, posC, posD;
@@ -68,7 +70,7 @@ public class module4_thuchanh : MonoBehaviour
 
         // Đáy trên và Handle kéo
         Vector3 offset = new Vector3(1.0f, 2.0f, 0.5f);
-        handleAprime = GeoFactory.CreatePoint(posA + offset, new Color32(255, 50, 50, 255), "Kéo A'", true);
+        handleAprime = GeoFactory.CreatePointVR(posA + offset, new Color32(255, 50, 50, 255), "Kéo A'", true);
         handleAprime.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
         startHandlePos = handleAprime.transform.position;
 
@@ -95,6 +97,20 @@ public class module4_thuchanh : MonoBehaviour
         measureBB = GeoFactory.CreateMeasure(ptB, ptBprime, Color.white);
         measureAB = GeoFactory.CreateMeasure(ptA, ptB, Color.white);
         measureAprimeBprime = GeoFactory.CreateMeasure(handleAprime, ptBprime, Color.white);
+
+        // Khởi tạo UI Panel
+        GameObject uiPanel = new GameObject("UIPanel");
+        uiPanel.transform.position = new Vector3(-2f, 2.5f, 4.5f);
+        uiPanel.AddComponent<Billboard>();
+
+        GameObject statusObj = new GameObject("StatusArea");
+        statusObj.transform.SetParent(uiPanel.transform);
+        statusObj.transform.localPosition = Vector3.zero;
+        uiStatusText = statusObj.AddComponent<TextMeshPro>();
+        uiStatusText.fontSize = 1.2f;
+        uiStatusText.color = Color.yellow;
+        uiStatusText.alignment = TextAlignmentOptions.TopLeft;
+        uiStatusText.text = "Thực hành 1: Kéo điểm A' để làm biến dạng Lăng trụ.\nNhấn nút [A/X] trên VR hoặc [Space] trên PC để sang phần tiếp theo.";
 
         yield return null;
     }
@@ -124,9 +140,25 @@ public class module4_thuchanh : MonoBehaviour
             centerO.transform.position = (ptA.transform.position + ptCprime.transform.position) / 2f;
         }
 
-        // Điều kiện hoàn thành Thực hành 1 và Chuyển tiếp (Nhấn Space để chuyển)
-        if (state == 0 && UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame) {
+        // Đọc tín hiệu nút bấm VR (Nút Primary - A/X)
+        bool currentVRButtonPressed = false;
+        var devices = new System.Collections.Generic.List<UnityEngine.XR.InputDevice>();
+        UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(UnityEngine.XR.InputDeviceCharacteristics.Controller, devices);
+        foreach (var device in devices)
+        {
+            if (device.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primaryButton, out bool btn) && btn) currentVRButtonPressed = true;
+        }
+
+        bool vrWasPressedThisFrame = currentVRButtonPressed && !prevVRButtonPressed;
+        prevVRButtonPressed = currentVRButtonPressed;
+
+        // Điều kiện hoàn thành Thực hành 1 và Chuyển tiếp (Nhấn Space hoặc nút VR để chuyển)
+        if (state == 0 && ((UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame) || vrWasPressedThisFrame)) {
             state = 1;
+            if (uiStatusText != null) {
+                uiStatusText.text = "Thực hành 2: Hình Hộp.\nCác đường chéo đồng quy tại Tâm đối xứng O.";
+                uiStatusText.color = Color.green;
+            }
             StartCoroutine(TransitionToParallelepiped());
         }
     }

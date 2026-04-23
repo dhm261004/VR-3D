@@ -43,8 +43,8 @@ public class module3_thuchanh : MonoBehaviour
         GeoFactory.CreatePoint(C, highlightColor, "C", false).transform.localScale = Vector3.one * 0.04f;
 
         // Khởi tạo Cát tuyến 2 (Thanh kim loại)
-        handleTop = GeoFactory.CreatePoint(new Vector3(1.0f, 1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
-        handleBot = GeoFactory.CreatePoint(new Vector3(1.5f, -1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
+        handleTop = GeoFactory.CreatePointVR(new Vector3(1.0f, 1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
+        handleBot = GeoFactory.CreatePointVR(new Vector3(1.5f, -1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
         handleTop.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
         handleBot.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 

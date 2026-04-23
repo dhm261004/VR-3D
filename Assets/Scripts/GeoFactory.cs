@@ -68,6 +68,25 @@ public static class GeoFactory
         return p;
     }
 
+    public static GameObject CreatePointVR(Vector3 pos, Color c, string name, bool isDraggable = false) {
+        GameObject p = GameObject.CreatePrimitive(PrimitiveType.Cube); 
+        p.name = name; 
+        p.transform.position = pos; 
+        p.transform.localScale = Vector3.zero; 
+        p.GetComponent<Renderer>().sharedMaterial = GetMat(c, true);
+        
+        // Nhét vào thư mục [POINTS]
+        p.transform.SetParent(GetGroup("[POINTS]"));
+
+        if (isDraggable) {
+            p.AddComponent<InteractivePoint_VR>();
+            p.GetComponent<BoxCollider>().size = Vector3.one * 4f; 
+        }
+
+        CreateLabel(p.transform, name, new Color32(255, 255, 255, 255)); 
+        return p;
+    }
+
     public static GameObject CreateLine(GameObject p1, GameObject p2, Color c, float w = 0.015f) {
         GameObject l = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
         Object.Destroy(l.GetComponent<Collider>()); 
