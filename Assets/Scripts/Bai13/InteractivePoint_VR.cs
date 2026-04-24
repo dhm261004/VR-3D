@@ -16,21 +16,37 @@ public class InteractivePoint_VR : MonoBehaviour
     private Rigidbody _rb;
     private XRGrabInteractable _grabInteractable;
 
+    /// <summary>
+    /// True khi tay VR đang cầm vật thể này.
+    /// Module scripts dùng để tạm dừng constraint Update() tránh xung đột với XR.
+    /// </summary>
+    public bool IsGrabbed => _grabInteractable != null && _grabInteractable.isSelected;
+
     void Start()
     {
         _cam = Camera.main;
         
-        // Cấu hình vật lý cơ bản để VR có thể cầm được nhưng không bị rớt
         _rb = GetComponent<Rigidbody>();
         _rb.useGravity = false;
-        _rb.isKinematic = true; 
+        // isKinematic = FALSE để XRGrabInteractable có thể di chuyển vật thể
+        _rb.isKinematic = false;
+        _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        _rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        // Khoá xoay để vật thể không lăn lung tung
+        _rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-        // Móc sự kiện VR tự động
         _grabInteractable = GetComponent<XRGrabInteractable>();
         if (_grabInteractable != null)
         {
-            // Bắt sự kiện khi tay cầm kích hoạt (bóp cò) vào vật thể này trong lúc đang cầm
+            // Dùng Kinematic movement type: XR Toolkit tự tắt/bật isKinematic khi grab
+            _grabInteractable.movementType = XRBaseInteractable.MovementType.Kinematic;
+            _grabInteractable.trackPosition = true;
+            _grabInteractable.trackRotation = false; // Không xoay theo tay cầm
+            _grabInteractable.throwOnDetach = false; // Không bắn vật thể khi thả
+
             _grabInteractable.activated.AddListener(OnVRActivated);
+            // Fix stickiness bug: khi nhả grab, đảm bảo Rigidbody reset đúng cách
+            _grabInteractable.selectExited.AddListener(OnSelectExited);
         }
     }
 
@@ -39,19 +55,32 @@ public class InteractivePoint_VR : MonoBehaviour
         if (_grabInteractable != null)
         {
             _grabInteractable.activated.RemoveListener(OnVRActivated);
+            _grabInteractable.selectExited.RemoveListener(OnSelectExited);
         }
+    }
+
+    /// <summary>
+    /// Fix stickiness bug: Khi XR Device Simulator nhả grab (Shift+G lần 2),
+    /// đảm bảo Rigidbody không còn bám theo tay cầm nữa.
+    /// </summary>
+    private void OnSelectExited(SelectExitEventArgs args)
+    {
+        // Đảm bảo isKinematic = false và velocity = 0 sau khi nhả
+        if (_rb != null)
+        {
+            _rb.isKinematic = false;
+            _rb.linearVelocity = Vector3.zero;
+            _rb.angularVelocity = Vector3.zero;
+        }
+        _isDragging = false;
     }
 
     void Update()
     {
-        // ==========================================
-        // PHẦN NÀY CHỈ CHẠY TRÊN PC (DÙNG CHUỘT)
-        // Khi đeo kính VR, phần này sẽ tự động bị bỏ qua
-        // ==========================================
-        // Ngăn xung đột: Nếu tay cầm VR đang cầm vật thể này, bỏ qua xử lý chuột
-        if (_grabInteractable != null && _grabInteractable.isSelected) 
+        // Nếu VR đang cầm → bỏ qua xử lý chuột
+        if (IsGrabbed)
         {
-            _isDragging = false; // Xoá trạng thái kéo chuột để tránh bị kẹt khi thả VR ra
+            _isDragging = false;
             return;
         }
 
@@ -81,12 +110,12 @@ public class InteractivePoint_VR : MonoBehaviour
             _isDragging = false;
         }
 
-        // 4. KÉO THẢ BẰNG CHUỘT
+        // 4. KÉO THẢ BẰNG CHUỘT - dùng MovePosition tương thích Rigidbody
         if (_isDragging)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
             Vector3 screenPosition = new Vector3(mousePos.x, mousePos.y, _zDistance);
-            transform.position = _cam.ScreenToWorldPoint(screenPosition);
+            _rb.MovePosition(_cam.ScreenToWorldPoint(screenPosition));
         }
     }
 

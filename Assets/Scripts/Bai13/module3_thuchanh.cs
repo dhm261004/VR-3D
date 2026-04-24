@@ -12,67 +12,72 @@ public class module3_thuchanh : MonoBehaviour
     private bool isSuccess = false;
     private Vector3 startHandlePos;
 
-    // Fixed points for line 1
-    private Vector3 A = new Vector3(-1.0f, 1.0f, 3.0f);
-    private Vector3 B = new Vector3(-0.5f, 0.0f, 3.0f);
-    private Vector3 C = new Vector3( 0.0f,-1.0f, 3.0f);
+    // Chiều cao các mặt phẳng (local) - khớp với module3_lythuyet
+    private const float Y_P = 1.2f;
+    private const float Y_Q = 0.75f;
+    private const float Y_R = 0.3f;
+
+    // Cát tuyến cố định 1 - giao điểm với 3 mặt phẳng tại Z=0
+    private Vector3 A = new Vector3(-1.0f, Y_P, 0f);
+    private Vector3 B = new Vector3(-0.5f, Y_Q, 0f);
+    private Vector3 C = new Vector3( 0.0f, Y_R, 0f);
 
     IEnumerator Start()
     {
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
 
         Color alphaColor = new Color32(0, 150, 255, 100);
-        Color betaColor = new Color32(0, 255, 150, 100);
+        Color betaColor  = new Color32(0, 255, 150, 100);
         Color gammaColor = new Color32(255, 50, 255, 80); 
         Color highlightColor = new Color32(255, 255, 0, 255);
-        Color rodColor = new Color32(255, 100, 100, 255);
+        Color rodColor   = new Color32(255, 100, 100, 255);
 
-        // Khởi tạo 3 Mặt phẳng song song
-        CreatePlane(1.0f, alphaColor, "(P)");
-        CreatePlane(0.0f, betaColor, "(Q)");
-        CreatePlane(-1.0f, gammaColor, "(R)");
+        // 3 Mặt phẳng song song
+        CreatePlane(Y_P, alphaColor, "(P)");
+        CreatePlane(Y_Q, betaColor, "(Q)");
+        CreatePlane(Y_R, gammaColor, "(R)");
 
-        // Khởi tạo tia sáng 1 (Laser cố định)
-        GameObject l1p1 = GeoFactory.CreatePoint(new Vector3(-1.5f, 2.0f, 3.0f), highlightColor, " ", false);
-        GameObject l1p2 = GeoFactory.CreatePoint(new Vector3(0.5f, -2.0f, 3.0f), highlightColor, " ", false);
-        GameObject line1 = GeoFactory.CreateLine(l1p1, l1p2, highlightColor, 0.02f);
+        // Cát tuyến 1 (cố định)
+        GameObject l1p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-1.5f, Y_P + 0.8f, 0f)), highlightColor, " ", false));
+        GameObject l1p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 0.5f, Y_R - 0.8f, 0f)), highlightColor, " ", false));
+        GameObject line1 = Fix(GeoFactory.CreateLine(l1p1, l1p2, highlightColor, 0.02f));
         line1.GetComponent<EdgeFollower>().isAnimating = false;
 
-        GeoFactory.CreatePoint(A, highlightColor, "A", false).transform.localScale = Vector3.one * 0.04f;
-        GeoFactory.CreatePoint(B, highlightColor, "B", false).transform.localScale = Vector3.one * 0.04f;
-        GeoFactory.CreatePoint(C, highlightColor, "C", false).transform.localScale = Vector3.one * 0.04f;
+        Fix(GeoFactory.CreatePoint(transform.TransformPoint(A), highlightColor, "A", false)).transform.localScale = Vector3.one * 0.04f;
+        Fix(GeoFactory.CreatePoint(transform.TransformPoint(B), highlightColor, "B", false)).transform.localScale = Vector3.one * 0.04f;
+        Fix(GeoFactory.CreatePoint(transform.TransformPoint(C), highlightColor, "C", false)).transform.localScale = Vector3.one * 0.04f;
 
-        // Khởi tạo Cát tuyến 2 (Thanh kim loại)
-        handleTop = GeoFactory.CreatePointVR(new Vector3(1.0f, 1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
-        handleBot = GeoFactory.CreatePointVR(new Vector3(1.5f, -1.5f, 3.0f), new Color32(255, 50, 50, 255), "Kéo", true);
+        // Cát tuyến 2 (kéo được) - KHÔNG Fix() để XR Grab hoạt động bình thường
+        handleTop = GeoFactory.CreatePointVR(transform.TransformPoint(new Vector3(1.0f, Y_P + 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
+        handleBot = GeoFactory.CreatePointVR(transform.TransformPoint(new Vector3(1.5f, Y_R - 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
         handleTop.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
         handleBot.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 
-        GameObject line2 = GeoFactory.CreateLine(handleTop, handleBot, rodColor, 0.04f);
+        GameObject line2 = Fix(GeoFactory.CreateLine(handleTop, handleBot, rodColor, 0.04f));
         line2.GetComponent<EdgeFollower>().isAnimating = false;
 
-        ptAprime = GeoFactory.CreatePoint(Vector3.zero, rodColor, "A'", false);
-        ptBprime = GeoFactory.CreatePoint(Vector3.zero, rodColor, "B'", false);
-        ptCprime = GeoFactory.CreatePoint(Vector3.zero, rodColor, "C'", false);
+        ptAprime = Fix(GeoFactory.CreatePoint(Vector3.zero, rodColor, "A'", false));
+        ptBprime = Fix(GeoFactory.CreatePoint(Vector3.zero, rodColor, "B'", false));
+        ptCprime = Fix(GeoFactory.CreatePoint(Vector3.zero, rodColor, "C'", false));
         ptAprime.transform.localScale = ptBprime.transform.localScale = ptCprime.transform.localScale = Vector3.one * 0.05f;
 
-        startHandlePos = handleTop.transform.position;
+        startHandlePos = transform.InverseTransformPoint(handleTop.transform.position);
 
-        // Khởi tạo UI Panel
-        GameObject uiPanel = new GameObject("UIPanel");
-        uiPanel.transform.position = new Vector3(0, 2.8f, 4.5f);
+        // UI Panel
+        GameObject uiPanel = Fix(new GameObject("UIPanel"));
+        uiPanel.transform.localPosition = new Vector3(0, Y_P + 1.6f, 1.5f);
         uiPanel.AddComponent<Billboard>();
 
-        GameObject col1Obj = new GameObject("Col1"); col1Obj.transform.SetParent(uiPanel.transform); col1Obj.transform.localPosition = new Vector3(-1.8f, 0, 0);
+        GameObject col1Obj = Fix(new GameObject("Col1")); col1Obj.transform.SetParent(uiPanel.transform); col1Obj.transform.localPosition = new Vector3(-1.8f, 0, 0);
         col1 = col1Obj.AddComponent<TextMeshPro>(); col1.fontSize = 1.2f; col1.alignment = TextAlignmentOptions.Center;
 
-        GameObject col2Obj = new GameObject("Col2"); col2Obj.transform.SetParent(uiPanel.transform); col2Obj.transform.localPosition = new Vector3(0, 0, 0);
+        GameObject col2Obj = Fix(new GameObject("Col2")); col2Obj.transform.SetParent(uiPanel.transform); col2Obj.transform.localPosition = new Vector3(0, 0, 0);
         col2 = col2Obj.AddComponent<TextMeshPro>(); col2.fontSize = 1.2f; col2.alignment = TextAlignmentOptions.Center;
 
-        GameObject col3Obj = new GameObject("Col3"); col3Obj.transform.SetParent(uiPanel.transform); col3Obj.transform.localPosition = new Vector3(1.8f, 0, 0);
+        GameObject col3Obj = Fix(new GameObject("Col3")); col3Obj.transform.SetParent(uiPanel.transform); col3Obj.transform.localPosition = new Vector3(1.8f, 0, 0);
         col3 = col3Obj.AddComponent<TextMeshPro>(); col3.fontSize = 1.2f; col3.alignment = TextAlignmentOptions.Center;
 
-        GameObject statusObj = new GameObject("StatusArea");
+        GameObject statusObj = Fix(new GameObject("StatusArea"));
         statusObj.transform.SetParent(uiPanel.transform);
         statusObj.transform.localPosition = new Vector3(0, -1.2f, 0);
         uiStatusText = statusObj.AddComponent<TextMeshPro>();
@@ -88,32 +93,40 @@ public class module3_thuchanh : MonoBehaviour
     {
         if (handleTop == null || handleBot == null) return;
 
-        // Ép tọa độ handle để tránh thanh nằm ngang không cắt được mặt phẳng
-        Vector3 pT = handleTop.transform.position;
-        if (pT.y < 1.1f) { pT.y = 1.1f; handleTop.transform.position = pT; }
-        
-        Vector3 pB = handleBot.transform.position;
-        if (pB.y > -1.1f) { pB.y = -1.1f; handleBot.transform.position = pB; }
+        // Handles ở world space (không Fix) → convert về local để tính toán
+        Vector3 pT = transform.InverseTransformPoint(handleTop.transform.position);
+        Vector3 pB = transform.InverseTransformPoint(handleBot.transform.position);
 
-        // Tính giao điểm A', B', C' với các mặt phẳng Y=1, Y=0, Y=-1
+        bool grabbingTop = handleTop.GetComponent<InteractivePoint_VR>()?.IsGrabbed ?? false;
+        bool grabbingBot = handleBot.GetComponent<InteractivePoint_VR>()?.IsGrabbed ?? false;
+
+        // Chỉ ép constraint khi KHÔNG đang bị grab
+        if (!grabbingTop && pT.y < Y_P + 0.1f) {
+            pT.y = Y_P + 0.1f;
+            handleTop.transform.position = transform.TransformPoint(pT);
+        }
+        if (!grabbingBot && pB.y > Y_R - 0.1f) {
+            pB.y = Y_R - 0.1f;
+            handleBot.transform.position = transform.TransformPoint(pB);
+        }
+
+        // Tính giao điểm A', B', C' với 3 mặt phẳng (trong local space)
         float dy = pB.y - pT.y;
-        
-        // Alpha Y = 1.0
-        float tA = (1.0f - pT.y) / dy;
+        if (Mathf.Abs(dy) < 0.01f) return; // tránh chia cho 0
+
+        float tA = (Y_P - pT.y) / dy;
         Vector3 Aprime = pT + tA * (pB - pT);
-        ptAprime.transform.position = Aprime;
+        ptAprime.transform.localPosition = Aprime;
 
-        // Beta Y = 0.0
-        float tB = (0.0f - pT.y) / dy;
+        float tB = (Y_Q - pT.y) / dy;
         Vector3 Bprime = pT + tB * (pB - pT);
-        ptBprime.transform.position = Bprime;
+        ptBprime.transform.localPosition = Bprime;
 
-        // Gamma Y = -1.0
-        float tC = (-1.0f - pT.y) / dy;
+        float tC = (Y_R - pT.y) / dy;
         Vector3 Cprime = pT + tC * (pB - pT);
-        ptCprime.transform.position = Cprime;
+        ptCprime.transform.localPosition = Cprime;
 
-        // Cập nhật UI
+        // Tỉ lệ Thales
         float AB = Vector3.Distance(A, B);
         float BC = Vector3.Distance(B, C);
         float AC = Vector3.Distance(A, C);
@@ -121,6 +134,8 @@ public class module3_thuchanh : MonoBehaviour
         float ApBp = Vector3.Distance(Aprime, Bprime);
         float BpCp = Vector3.Distance(Bprime, Cprime);
         float ApCp = Vector3.Distance(Aprime, Cprime);
+
+        if (ApBp < 0.001f || BpCp < 0.001f || ApCp < 0.001f) return;
 
         float ratio1 = AB / ApBp;
         float ratio2 = BC / BpCp;
@@ -130,7 +145,8 @@ public class module3_thuchanh : MonoBehaviour
         col2.text = $"<color=white>BC / B'C'</color>\n<size=80%>{BC:F2} / {BpCp:F2}</size>\n<color=yellow>= {ratio2:F2}</color>";
         col3.text = $"<color=white>AC / A'C'</color>\n<size=80%>{AC:F2} / {ApCp:F2}</size>\n<color=yellow>= {ratio3:F2}</color>";
 
-        if (!isSuccess && Vector3.Distance(pT, startHandlePos) > 1.0f)
+        Vector3 curHandleLocalPos = transform.InverseTransformPoint(handleTop.transform.position);
+        if (!isSuccess && Vector3.Distance(curHandleLocalPos, startHandlePos) > 0.8f)
         {
             isSuccess = true;
             uiStatusText.text = "Định lý Thalès đã được chứng minh!\n(Nút 'Module Tiếp theo' sáng lên)";
@@ -141,15 +157,21 @@ public class module3_thuchanh : MonoBehaviour
 
     void CreatePlane(float yPos, Color color, string label)
     {
-        GameObject p1 = GeoFactory.CreatePoint(new Vector3(-3, yPos, 1.5f), color, " ", false);
-        GameObject p2 = GeoFactory.CreatePoint(new Vector3( 3, yPos, 1.5f), color, " ", false);
-        GameObject p3 = GeoFactory.CreatePoint(new Vector3( 3, yPos, 4.5f), color, label, false);
-        GameObject p4 = GeoFactory.CreatePoint(new Vector3(-3, yPos, 4.5f), color, " ", false);
+        GameObject p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-3, yPos, -1.5f)), color, " ", false));
+        GameObject p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 3, yPos, -1.5f)), color, " ", false));
+        GameObject p3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 3, yPos,  1.5f)), color, label, false));
+        GameObject p4 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-3, yPos,  1.5f)), color, " ", false));
         p1.transform.localScale = p2.transform.localScale = p3.transform.localScale = p4.transform.localScale = Vector3.one * 0.04f;
         
-        GameObject face = GeoFactory.CreateFace(new GameObject[] { p1, p2, p3, p4 }, color);
+        GameObject face = Fix(GeoFactory.CreateFace(new GameObject[] { p1, p2, p3, p4 }, color));
         Material mat = face.GetComponent<MeshRenderer>().sharedMaterial;
         if (mat.HasProperty("_BaseColor")) mat.DOFade(0.4f, "_BaseColor", 0.5f);
         else mat.DOFade(0.4f, "_Color", 0.5f);
+    }
+
+    private GameObject Fix(GameObject obj)
+    {
+        if (obj != null) obj.transform.SetParent(this.transform);
+        return obj;
     }
 }
