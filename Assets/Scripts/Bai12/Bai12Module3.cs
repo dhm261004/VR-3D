@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -24,9 +23,8 @@ public class Bai12Module3 : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current == null) return;
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && !_busy) NextStep();
-        if (Keyboard.current.rKey.wasPressedThisFrame) ResetAll();
+        if (LessonInputBridge.NextPressed && !_busy) NextStep();
+        if (LessonInputBridge.ResetPressed) ResetAll();
     }
 
     void NextStep()
@@ -102,7 +100,7 @@ public class Bai12Module3 : MonoBehaviour
         _busy = true;
         var go = new GameObject("Result");
         go.transform.SetParent(transform);
-        go.transform.position = new Vector3(0f, 1.8f, 0f);
+        go.transform.localPosition = new Vector3(0f, 1.8f, 0f);
         go.AddComponent<Billboard>();
         var tm = go.AddComponent<TextMeshPro>();
         tm.text = "∴ a // b";
@@ -124,7 +122,7 @@ public class Bai12Module3 : MonoBehaviour
     {
         var p = GameObject.CreatePrimitive(PrimitiveType.Quad);
         p.transform.SetParent(transform);
-        p.transform.position = pos;
+        p.transform.localPosition = pos;
         p.transform.localScale = scale;
         p.transform.rotation = Quaternion.Euler(90 - rotX, 0, 0);
         Destroy(p.GetComponent<Collider>());
@@ -143,6 +141,7 @@ public class Bai12Module3 : MonoBehaviour
         var go = new GameObject("Line");
         go.transform.SetParent(transform);
         var lr = go.AddComponent<LineRenderer>();
+        lr.useWorldSpace = false;
         lr.positionCount = 2;
         lr.SetPosition(0, from); lr.SetPosition(1, to);
         lr.startWidth = lr.endWidth = 0.05f;
@@ -156,7 +155,7 @@ public class Bai12Module3 : MonoBehaviour
     {
         var go = new GameObject("Lbl");
         go.transform.SetParent(transform);
-        go.transform.position = pos;
+        go.transform.localPosition = pos;
         go.AddComponent<Billboard>();
         var tm = go.AddComponent<TextMeshPro>();
         tm.text = text; tm.color = arrowColor; tm.fontSize = size;

@@ -14,6 +14,9 @@ public class module2_thuchanh : MonoBehaviour
     private TextMeshPro uiStatusText;
     private bool isSuccess = false;
 
+    private void OnDisable() => CleanupDetachedRuntimeObjects();
+    private void OnDestroy() => CleanupDetachedRuntimeObjects();
+
     IEnumerator Start()
     {
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
@@ -60,7 +63,7 @@ public class module2_thuchanh : MonoBehaviour
         lineB.GetComponent<EdgeFollower>().isAnimating = false;
 
         // Cần gạt - KHÔNG Fix() để XR Grab Interactable hoạt động bình thường
-        lever = GeoFactory.CreatePointVR(transform.TransformPoint(new Vector3(0f, 1.3f, 0f)), new Color32(255, 50, 50, 255), "CẦN GẠT", true);
+        lever = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(0f, 1.3f, 0f)), new Color32(255, 50, 50, 255), "CẦN GẠT", true);
         lever.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 
         // UI Panel - đặt góc trên trái
@@ -172,5 +175,26 @@ public class module2_thuchanh : MonoBehaviour
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
+    }
+
+    private void CleanupDetachedRuntimeObjects()
+    {
+        DestroyHandleAndLinkedLabels(ref lever);
+    }
+
+    private static void DestroyHandleAndLinkedLabels(ref GameObject handle)
+    {
+        if (handle == null) return;
+
+        PositionFollower[] followers = FindObjectsByType<PositionFollower>(FindObjectsSortMode.None);
+        for (int i = 0; i < followers.Length; i++)
+        {
+            PositionFollower follower = followers[i];
+            if (follower == null || follower.target != handle.transform) continue;
+            if (follower.gameObject != null) Destroy(follower.gameObject);
+        }
+
+        Destroy(handle);
+        handle = null;
     }
 }

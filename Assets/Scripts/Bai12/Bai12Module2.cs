@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -27,9 +26,8 @@ public class Bai12Module2 : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current == null) return;
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && !_busy) NextStep();
-        if (Keyboard.current.rKey.wasPressedThisFrame) ResetAll();
+        if (LessonInputBridge.NextPressed && !_busy) NextStep();
+        if (LessonInputBridge.ResetPressed) ResetAll();
     }
 
     void NextStep()
@@ -101,7 +99,7 @@ public class Bai12Module2 : MonoBehaviour
         // Kết quả
         _resultLabel = new GameObject("Result");
         _resultLabel.transform.SetParent(transform);
-        _resultLabel.transform.position = new Vector3(0f, 1.3f, 0f);
+        _resultLabel.transform.localPosition = new Vector3(0f, 1.3f, 0f);
         _resultLabel.AddComponent<Billboard>();
         var tm = _resultLabel.AddComponent<TextMeshPro>();
         tm.text = "∴ a // (P)";
@@ -119,7 +117,7 @@ public class Bai12Module2 : MonoBehaviour
     {
         GameObject p = GameObject.CreatePrimitive(PrimitiveType.Quad);
         p.transform.SetParent(transform);
-        p.transform.position = pos;
+        p.transform.localPosition = pos;
         p.transform.localScale = size;
         p.transform.rotation = Quaternion.Euler(90, 0, 0);
         Destroy(p.GetComponent<Collider>());
@@ -137,6 +135,7 @@ public class Bai12Module2 : MonoBehaviour
         GameObject go = new GameObject("Line");
         go.transform.SetParent(transform);
         var lr = go.AddComponent<LineRenderer>();
+        lr.useWorldSpace = false;
         lr.positionCount = 2;
         lr.SetPosition(0, from);
         lr.SetPosition(1, to);
@@ -151,7 +150,7 @@ public class Bai12Module2 : MonoBehaviour
     {
         GameObject go = new GameObject("Lbl_" + text);
         go.transform.SetParent(transform);
-        go.transform.position = pos;
+        go.transform.localPosition = pos;
         go.AddComponent<Billboard>();
         var tm = go.AddComponent<TextMeshPro>();
         tm.text = text; tm.color = c; tm.fontSize = size;

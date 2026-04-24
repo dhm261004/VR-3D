@@ -34,6 +34,9 @@ public class module4_thuchanh : MonoBehaviour
     private Color transparentGlass = new Color32(100, 200, 255, 60);
     private Color diagColor       = new Color32(0, 255, 255, 255);
 
+    private void OnDisable() => CleanupDetachedRuntimeObjects();
+    private void OnDestroy() => CleanupDetachedRuntimeObjects();
+
     IEnumerator Start()
     {
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
@@ -64,7 +67,7 @@ public class module4_thuchanh : MonoBehaviour
 
         // Handle A' - KHÔNG Fix() để XR Grab hoạt động bình thường
         Vector3 offset = new Vector3(1.0f, 2.0f, 0.5f);
-        handleAprime = GeoFactory.CreatePointVR(transform.TransformPoint(posA + offset), new Color32(255, 50, 50, 255), "Kéo A'", true);
+        handleAprime = GeoFactory.CreatePoint(transform.TransformPoint(posA + offset), new Color32(255, 50, 50, 255), "Kéo A'", true);
         handleAprime.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
         startHandlePos = transform.InverseTransformPoint(handleAprime.transform.position);
 
@@ -228,5 +231,26 @@ public class module4_thuchanh : MonoBehaviour
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
+    }
+
+    private void CleanupDetachedRuntimeObjects()
+    {
+        DestroyHandleAndLinkedLabels(ref handleAprime);
+    }
+
+    private static void DestroyHandleAndLinkedLabels(ref GameObject handle)
+    {
+        if (handle == null) return;
+
+        PositionFollower[] followers = FindObjectsByType<PositionFollower>(FindObjectsSortMode.None);
+        for (int i = 0; i < followers.Length; i++)
+        {
+            PositionFollower follower = followers[i];
+            if (follower == null || follower.target != handle.transform) continue;
+            if (follower.gameObject != null) Destroy(follower.gameObject);
+        }
+
+        Destroy(handle);
+        handle = null;
     }
 }

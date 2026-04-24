@@ -12,6 +12,9 @@ public class module3_thuchanh : MonoBehaviour
     private bool isSuccess = false;
     private Vector3 startHandlePos;
 
+    private void OnDisable() => CleanupDetachedRuntimeObjects();
+    private void OnDestroy() => CleanupDetachedRuntimeObjects();
+
     // Chiều cao các mặt phẳng (local) - khớp với module3_lythuyet
     private const float Y_P = 1.2f;
     private const float Y_Q = 0.75f;
@@ -48,8 +51,8 @@ public class module3_thuchanh : MonoBehaviour
         Fix(GeoFactory.CreatePoint(transform.TransformPoint(C), highlightColor, "C", false)).transform.localScale = Vector3.one * 0.04f;
 
         // Cát tuyến 2 (kéo được) - KHÔNG Fix() để XR Grab hoạt động bình thường
-        handleTop = GeoFactory.CreatePointVR(transform.TransformPoint(new Vector3(1.0f, Y_P + 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
-        handleBot = GeoFactory.CreatePointVR(transform.TransformPoint(new Vector3(1.5f, Y_R - 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
+        handleTop = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(1.0f, Y_P + 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
+        handleBot = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(1.5f, Y_R - 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
         handleTop.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
         handleBot.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 
@@ -173,5 +176,27 @@ public class module3_thuchanh : MonoBehaviour
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
+    }
+
+    private void CleanupDetachedRuntimeObjects()
+    {
+        DestroyHandleAndLinkedLabels(ref handleTop);
+        DestroyHandleAndLinkedLabels(ref handleBot);
+    }
+
+    private static void DestroyHandleAndLinkedLabels(ref GameObject handle)
+    {
+        if (handle == null) return;
+
+        PositionFollower[] followers = FindObjectsByType<PositionFollower>(FindObjectsSortMode.None);
+        for (int i = 0; i < followers.Length; i++)
+        {
+            PositionFollower follower = followers[i];
+            if (follower == null || follower.target != handle.transform) continue;
+            if (follower.gameObject != null) Destroy(follower.gameObject);
+        }
+
+        Destroy(handle);
+        handle = null;
     }
 }

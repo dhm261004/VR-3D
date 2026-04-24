@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -43,9 +42,8 @@ public class Bai14Module2 : MonoBehaviour
     void Start() => StartCoroutine(Step1());
     void Update()
     {
-        if (Keyboard.current == null) return;
-        if (Keyboard.current.spaceKey.wasPressedThisFrame && !_busy) Advance();
-        if (Keyboard.current.rKey.wasPressedThisFrame) ResetAll();
+        if (LessonInputBridge.NextPressed && !_busy) Advance();
+        if (LessonInputBridge.ResetPressed) ResetAll();
     }
 
     void Advance()
@@ -218,12 +216,12 @@ public class Bai14Module2 : MonoBehaviour
         var go = new GameObject("Poly");
         go.transform.SetParent(transform);
         var lr = go.AddComponent<LineRenderer>();
+        lr.useWorldSpace = false;
         lr.positionCount = pts.Length + 1;
         for (int i = 0; i < pts.Length; i++) lr.SetPosition(i, pts[i]);
         lr.SetPosition(pts.Length, pts[0]);
         lr.startWidth = lr.endWidth = w;
         lr.material = MakeMat(c);
-        lr.useWorldSpace = true;
     }
 
     void DrawLine(Vector3 a, Vector3 b, Color c, float w)
@@ -231,11 +229,11 @@ public class Bai14Module2 : MonoBehaviour
         var go = new GameObject("Line");
         go.transform.SetParent(transform);
         var lr = go.AddComponent<LineRenderer>();
+        lr.useWorldSpace = false;
         lr.positionCount = 2;
         lr.SetPosition(0, a); lr.SetPosition(1, b);
         lr.startWidth = lr.endWidth = w;
         lr.material = MakeMat(c);
-        lr.useWorldSpace = true;
     }
 
     void AnimateRay(Vector3 from, Vector3 to, Color c)
@@ -243,11 +241,11 @@ public class Bai14Module2 : MonoBehaviour
         var go = new GameObject("Ray");
         go.transform.SetParent(transform);
         var lr = go.AddComponent<LineRenderer>();
+        lr.useWorldSpace = false;
         lr.positionCount = 2;
         lr.SetPosition(0, from); lr.SetPosition(1, from);
         lr.startWidth = lr.endWidth = 0.025f;
         lr.material = MakeMat(c);
-        lr.useWorldSpace = true;
         float p = 0f;
         DOTween.To(() => p, v => { p = v; if (lr) lr.SetPosition(1, Vector3.Lerp(from, to, v)); },
                    1f, 0.4f).SetEase(Ease.Linear);
@@ -264,7 +262,7 @@ public class Bai14Module2 : MonoBehaviour
     {
         var go = new GameObject("Lbl");
         go.transform.SetParent(transform);
-        go.transform.position = pos;
+        go.transform.localPosition = pos;
         go.AddComponent<Billboard>();
         var tm = go.AddComponent<TextMeshPro>();
         tm.text = text; tm.color = c; tm.fontSize = size;
@@ -277,7 +275,7 @@ public class Bai14Module2 : MonoBehaviour
     {
         var p = GameObject.CreatePrimitive(PrimitiveType.Quad);
         p.transform.SetParent(transform);
-        p.transform.position = pos;
+        p.transform.localPosition = pos;
         p.transform.rotation = Quaternion.Euler(90, 0, 0);
         Destroy(p.GetComponent<Collider>());
         p.GetComponent<Renderer>().material = MakeMat(c, transparent: true);

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -24,9 +23,9 @@ public class Bai12Module1 : MonoBehaviour
     void Start()   => StartCoroutine(AutoPlay());
     void Update()
     {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame && !_running)
+        if (LessonInputBridge.NextPressed && !_running)
             StartCoroutine(AutoPlay());
-        if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame)
+        if (LessonInputBridge.ResetPressed)
         {
             StopAllCoroutines();
             foreach (Transform child in transform) Destroy(child.gameObject);

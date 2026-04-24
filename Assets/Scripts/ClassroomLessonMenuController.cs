@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -7,6 +8,8 @@ using UnityEngine.UI;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem.UI;
 #endif
+using UnityEngine.XR.Interaction.Toolkit.UI;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -64,7 +67,15 @@ public class ClassroomLessonMenuController : MonoBehaviour
     [Header("Center Classroom - 3D Model")]
     [SerializeField] private Transform modelSpawnRoot;
     [SerializeField] private Vector3 modelSpawnOffset = Vector3.zero;
+    [SerializeField] private bool inheritSpawnRootRotation = false;
+    [SerializeField] private bool parentSpawnedModelToRoot = false;
+    [SerializeField] private bool usePrefabRootOffsetOnSpawn = true;
+    [SerializeField] private bool usePrefabRootRotationOnSpawn = false;
     [SerializeField] private bool destroyOldModelOnSwitch = true;
+
+    [Header("Playback")]
+    [SerializeField] private bool allowKeyboardReplay = true;
+    [SerializeField] private KeyCode replayKey = KeyCode.R;
 
     [Header("Color Management - Chapter Active")]
     [SerializeField] private SelectionColors chapterColors = new SelectionColors
@@ -110,6 +121,13 @@ public class ClassroomLessonMenuController : MonoBehaviour
         ValidateInteractionSetup();
         BuildChapterButtons();
         SelectFirstAvailable();
+    }
+
+    private void Update()
+    {
+        if (!allowKeyboardReplay) return;
+        if (!IsReplayKeyPressed()) return;
+        ReplayCurrentLessonModel();
     }
 
     public void SelectChapter(int chapterIndex)
@@ -179,9 +197,11 @@ public class ClassroomLessonMenuController : MonoBehaviour
 
     private void ValidateInteractionSetup()
     {
-        if (FindFirstObjectByType<EventSystem>() == null)
+        EventSystem eventSystem = FindFirstObjectByType<EventSystem>();
+        if (eventSystem == null)
         {
             GameObject eventSystemGo = new GameObject("EventSystem", typeof(EventSystem));
+            eventSystem = eventSystemGo.GetComponent<EventSystem>();
 #if ENABLE_INPUT_SYSTEM
             eventSystemGo.AddComponent<InputSystemUIInputModule>();
 #else
@@ -190,7 +210,19 @@ public class ClassroomLessonMenuController : MonoBehaviour
             Debug.LogWarning("ClassroomLessonMenuController: EventSystem was missing, created automatically.");
         }
 
-        Canvas parentCanvas = GetComponentInParent<Canvas>();
+#if ENABLE_INPUT_SYSTEM
+        XRUIInputModule xrUiInputModule = eventSystem.GetComponent<XRUIInputModule>();
+        if (xrUiInputModule == null)
+            xrUiInputModule = eventSystem.gameObject.AddComponent<XRUIInputModule>();
+
+        InputSystemUIInputModule inputSystemUi = eventSystem.GetComponent<InputSystemUIInputModule>();
+        if (inputSystemUi != null)
+            inputSystemUi.enabled = false;
+#endif
+
+        Canvas parentCanvas = navbarTreeRoot != null
+            ? navbarTreeRoot.GetComponentInParent<Canvas>()
+            : GetComponentInParent<Canvas>();
         if (parentCanvas == null)
         {
             Debug.LogWarning("ClassroomLessonMenuController: Controller is not under a Canvas.");
@@ -202,6 +234,47 @@ public class ClassroomLessonMenuController : MonoBehaviour
             parentCanvas.gameObject.AddComponent<GraphicRaycaster>();
             Debug.LogWarning("ClassroomLessonMenuController: GraphicRaycaster was missing, added automatically.");
         }
+
+        if (parentCanvas.GetComponent<TrackedDeviceGraphicRaycaster>() == null)
+            parentCanvas.gameObject.AddComponent<TrackedDeviceGraphicRaycaster>();
+
+        ConfigureXRInteractorsForUI();
+    }
+
+    private void ConfigureXRInteractorsForUI()
+    {
+        XRRayInteractor[] rayInteractors = FindObjectsByType<XRRayInteractor>(FindObjectsSortMode.None);
+        for (int i = 0; i < rayInteractors.Length; i++)
+            TryEnableUIInteraction(rayInteractors[i]);
+
+        NearFarInteractor[] nearFarInteractors = FindObjectsByType<NearFarInteractor>(FindObjectsSortMode.None);
+        for (int i = 0; i < nearFarInteractors.Length; i++)
+            TryEnableUIInteraction(nearFarInteractors[i]);
+    }
+
+    private static void TryEnableUIInteraction(Component interactor)
+    {
+        if (interactor == null) return;
+
+        Type type = interactor.GetType();
+        bool changed = false;
+
+        PropertyInfo prop = type.GetProperty("enableUIInteraction", BindingFlags.Instance | BindingFlags.Public);
+        if (prop != null && prop.CanWrite && prop.PropertyType == typeof(bool))
+        {
+            prop.SetValue(interactor, true);
+            changed = true;
+        }
+
+        FieldInfo field = type.GetField("m_EnableUIInteraction", BindingFlags.Instance | BindingFlags.NonPublic);
+        if (field != null && field.FieldType == typeof(bool))
+        {
+            field.SetValue(interactor, true);
+            changed = true;
+        }
+
+        if (changed)
+            Debug.Log($"ClassroomLessonMenuController: Enabled UI interaction on {interactor.name} ({type.Name}).");
     }
 
     private void EnsureTreeRootLayout()
@@ -291,16 +364,12 @@ public class ClassroomLessonMenuController : MonoBehaviour
             lessonContentImage.preserveAspect = true;
             if (emptyContentLabel != null) emptyContentLabel.gameObject.SetActive(!hasImage);
         }
-
-        if (emptyContentLabel != null && lesson.contentImage == null)
-            emptyContentLabel.text = "Tiet nay chua gan anh noi dung.";
-
         SpawnLessonModel(lesson.modelPrefab);
     }
 
-    private void SpawnLessonModel(GameObject prefab)
+    private void SpawnLessonModel(GameObject prefab, bool forceDestroyCurrent = false)
     {
-        if (destroyOldModelOnSwitch && _activeModelInstance != null)
+        if ((destroyOldModelOnSwitch || forceDestroyCurrent) && _activeModelInstance != null)
         {
             Destroy(_activeModelInstance);
             _activeModelInstance = null;
@@ -308,10 +377,83 @@ public class ClassroomLessonMenuController : MonoBehaviour
 
         if (prefab == null) return;
 
-        Vector3 spawnPos = modelSpawnRoot.position + modelSpawnOffset;
-        _activeModelInstance = Instantiate(prefab, spawnPos, modelSpawnRoot.rotation);
-        _activeModelInstance.transform.SetParent(modelSpawnRoot, true);
+        if (modelSpawnRoot == null) modelSpawnRoot = transform;
+
+        Vector3 spawnPosition = modelSpawnRoot.position + modelSpawnOffset;
+        if (usePrefabRootOffsetOnSpawn)
+            spawnPosition += prefab.transform.localPosition;
+
+        Quaternion spawnRotation = inheritSpawnRootRotation ? modelSpawnRoot.rotation : Quaternion.identity;
+        if (usePrefabRootRotationOnSpawn)
+            spawnRotation = spawnRotation * prefab.transform.localRotation;
+
+        _activeModelInstance = Instantiate(prefab, spawnPosition, spawnRotation);
+        _activeModelInstance.transform.localScale = prefab.transform.localScale;
+
+        if (parentSpawnedModelToRoot)
+            _activeModelInstance.transform.SetParent(modelSpawnRoot, true);
+
         _activeModelInstance.name = prefab.name + "_Runtime";
+    }
+
+    private void ReplayCurrentLessonModel()
+    {
+        if (!IsChapterValid(_activeChapterIndex)) return;
+        LessonItem[] lessons = chapters[_activeChapterIndex].lessons;
+        if (lessons == null || _activeLessonIndex < 0 || _activeLessonIndex >= lessons.Length) return;
+
+        GameObject prefab = lessons[_activeLessonIndex].modelPrefab;
+        if (prefab == null)
+        {
+            Debug.LogWarning("ClassroomLessonMenuController: Current lesson has no prefab to replay.");
+            return;
+        }
+
+        SpawnLessonModel(prefab, true);
+    }
+
+    private bool IsReplayKeyPressed()
+    {
+#if ENABLE_INPUT_SYSTEM
+        var keyboard = UnityEngine.InputSystem.Keyboard.current;
+        if (keyboard == null) return false;
+
+        switch (replayKey)
+        {
+            case KeyCode.Space: return keyboard.spaceKey.wasPressedThisFrame;
+            case KeyCode.Return:
+            case KeyCode.KeypadEnter: return keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame;
+            case KeyCode.Backspace: return keyboard.backspaceKey.wasPressedThisFrame;
+            case KeyCode.Tab: return keyboard.tabKey.wasPressedThisFrame;
+            case KeyCode.R: return keyboard.rKey.wasPressedThisFrame;
+            case KeyCode.T: return keyboard.tKey.wasPressedThisFrame;
+            case KeyCode.Y: return keyboard.yKey.wasPressedThisFrame;
+            case KeyCode.U: return keyboard.uKey.wasPressedThisFrame;
+            case KeyCode.I: return keyboard.iKey.wasPressedThisFrame;
+            case KeyCode.O: return keyboard.oKey.wasPressedThisFrame;
+            case KeyCode.P: return keyboard.pKey.wasPressedThisFrame;
+            case KeyCode.A: return keyboard.aKey.wasPressedThisFrame;
+            case KeyCode.S: return keyboard.sKey.wasPressedThisFrame;
+            case KeyCode.D: return keyboard.dKey.wasPressedThisFrame;
+            case KeyCode.F: return keyboard.fKey.wasPressedThisFrame;
+            case KeyCode.G: return keyboard.gKey.wasPressedThisFrame;
+            case KeyCode.H: return keyboard.hKey.wasPressedThisFrame;
+            case KeyCode.J: return keyboard.jKey.wasPressedThisFrame;
+            case KeyCode.K: return keyboard.kKey.wasPressedThisFrame;
+            case KeyCode.L: return keyboard.lKey.wasPressedThisFrame;
+            case KeyCode.Z: return keyboard.zKey.wasPressedThisFrame;
+            case KeyCode.X: return keyboard.xKey.wasPressedThisFrame;
+            case KeyCode.C: return keyboard.cKey.wasPressedThisFrame;
+            case KeyCode.V: return keyboard.vKey.wasPressedThisFrame;
+            case KeyCode.B: return keyboard.bKey.wasPressedThisFrame;
+            case KeyCode.N: return keyboard.nKey.wasPressedThisFrame;
+            case KeyCode.M: return keyboard.mKey.wasPressedThisFrame;
+            default:
+                return keyboard.rKey.wasPressedThisFrame; // safe fallback
+        }
+#else
+        return Input.GetKeyDown(replayKey);
+#endif
     }
 
     private void RefreshChapterHighlights()
