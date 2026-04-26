@@ -16,8 +16,8 @@ public static class LessonContentCatalog
 
     public const string LessonTitle = "Bài 13: Hai mặt phẳng song song";
 
-    // Edit this list only when building new chapters/lessons.
-    // Runtime/UI will automatically read from here.
+    
+    
     public static readonly LessonEntry[] Lessons =
     {
         new LessonEntry(

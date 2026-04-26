@@ -3,10 +3,10 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 1 — Ba vị trí tương đối: Song song / Cắt nhau / Nằm trong
-/// Space = play sequence, R = reset
-/// </summary>
+
+
+
+
 public class Bai12Module1 : MonoBehaviour
 {
     [Header("Màu sắc")]
@@ -49,7 +49,7 @@ public class Bai12Module1 : MonoBehaviour
 
     IEnumerator ShowCase(Vector3 center, CaseType type)
     {
-        // Mặt phẳng
+        
         GameObject plane = CreatePlane(center, planeColor);
         plane.transform.localScale = Vector3.zero;
         plane.transform.DOScale(new Vector3(2.5f, 1.5f, 1f), 0.6f).SetEase(Ease.OutBack);
@@ -71,7 +71,7 @@ public class Bai12Module1 : MonoBehaviour
                 CreateLine(center + Vector3.up * 1.2f, center + Vector3.down * 1.2f, lineColor);
                 SpawnIntersectPoint(center);
                 break;
-            default: // Inside
+            default: 
                 lineColor = insideColor;
                 label = "d ⊂ (α)";
                 CreateLine(center + Vector3.left * 1.2f, center + Vector3.right * 1.2f, lineColor);

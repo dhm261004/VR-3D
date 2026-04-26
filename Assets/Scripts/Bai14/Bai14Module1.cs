@@ -3,11 +3,11 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 1 — Khái niệm phép chiếu song song
-/// Khung cửa ABCD → tia sáng song song Δ → bóng A′B′C′D′ trên sàn α
-/// Space = replay  |  R = reset
-/// </summary>
+
+
+
+
+
 public class Bai14Module1 : MonoBehaviour
 {
     [Header("Màu")]
@@ -18,16 +18,16 @@ public class Bai14Module1 : MonoBehaviour
     public Color labelPrimary     = new Color(0.3f,  0.85f, 1f,   1f);
     public Color labelShadow      = new Color(1f,    0.5f,  0.1f, 1f);
 
-    // Phương chiếu Δ (dùng để tính t = -P.y / Delta.y)
+    
     private static readonly Vector3 Delta = new Vector3(1f, -2f, 0.5f);
 
-    // 4 đỉnh khung cửa ABCD tại y = 2
+    
     private static readonly Vector3[] ABCDFrame =
     {
-        new Vector3(-0.8f,  2f, -0.8f), // A
-        new Vector3( 0.8f,  2f, -0.8f), // B
-        new Vector3( 0.8f,  2f,  0.8f), // C
-        new Vector3(-0.8f,  2f,  0.8f), // D
+        new Vector3(-0.8f,  2f, -0.8f), 
+        new Vector3( 0.8f,  2f, -0.8f), 
+        new Vector3( 0.8f,  2f,  0.8f), 
+        new Vector3(-0.8f,  2f,  0.8f), 
     };
 
     private bool _running;
@@ -46,7 +46,7 @@ public class Bai14Module1 : MonoBehaviour
         }
     }
 
-    // Chiếu điểm P theo Delta xuống mặt y = 0
+    
     static Vector3 ProjectToFloor(Vector3 p)
     {
         float t = -p.y / Delta.y;
@@ -57,7 +57,7 @@ public class Bai14Module1 : MonoBehaviour
     {
         _running = true;
 
-        // ── Bước 1: Mặt phẳng sàn α ──────────────────────────────────────
+        
         var floorScale = new Vector3(8f, 1f, 7f);
         var floor = MakeQuad(new Vector3(0.6f, 0f, 0.4f), floorColor);
         floor.transform.DOScale(floorScale, 0.7f).SetEase(Ease.OutBack);
@@ -66,13 +66,13 @@ public class Bai14Module1 : MonoBehaviour
                    new Color(0.55f, 0.55f, 0.55f), 2f);
         yield return new WaitForSeconds(0.5f);
 
-        // ── Bước 2: Khung cửa ABCD ───────────────────────────────────────
+        
         DrawPolyLoop(ABCDFrame, frameColor, 0.06f);
-        // Thanh chấn song ngang + dọc bên trong (giống Hình 4.56)
+        
         DrawLine(Midpoint(ABCDFrame[0], ABCDFrame[3]),
-                 Midpoint(ABCDFrame[1], ABCDFrame[2]), frameColor, 0.04f); // ngang giữa
+                 Midpoint(ABCDFrame[1], ABCDFrame[2]), frameColor, 0.04f); 
         DrawLine(Midpoint(ABCDFrame[0], ABCDFrame[1]),
-                 Midpoint(ABCDFrame[3], ABCDFrame[2]), frameColor, 0.04f); // dọc giữa
+                 Midpoint(ABCDFrame[3], ABCDFrame[2]), frameColor, 0.04f); 
 
         yield return new WaitForSeconds(0.4f);
 
@@ -87,7 +87,7 @@ public class Bai14Module1 : MonoBehaviour
             SpawnLabel(ABCDFrame[i] + labelOff[i], vertNames[i], frameColor, 2.5f);
         yield return new WaitForSeconds(0.7f);
 
-        // ── Bước 3: Tia sáng song song Δ (animate từng tia) ──────────────
+        
         var shadows = new Vector3[4];
         for (int i = 0; i < 4; i++) shadows[i] = ProjectToFloor(ABCDFrame[i]);
 
@@ -98,14 +98,14 @@ public class Bai14Module1 : MonoBehaviour
         }
         yield return new WaitForSeconds(0.55f);
 
-        // Nhãn phương chiếu Δ tại giữa một tia
+        
         Vector3 midFrame  = (ABCDFrame[1] + ABCDFrame[2]) * 0.5f;
         Vector3 midShadow = (shadows[1]   + shadows[2])   * 0.5f;
         SpawnLabel(Vector3.Lerp(midFrame, midShadow, 0.45f) + new Vector3(0.55f, 0, 0),
                    "Δ  (phương chiếu)", rayColor, 2f);
         yield return new WaitForSeconds(0.55f);
 
-        // ── Bước 4: Bóng A′B′C′D′ trên sàn ──────────────────────────────
+        
         DrawPolyLoop(shadows, shadowColor, 0.07f);
         yield return new WaitForSeconds(0.35f);
 
@@ -114,7 +114,7 @@ public class Bai14Module1 : MonoBehaviour
             SpawnLabel(shadows[i] + new Vector3(0f, 0.07f, 0f), shadowNames[i], labelShadow, 2.2f);
         yield return new WaitForSeconds(0.6f);
 
-        // ── Bước 5: Kết luận ─────────────────────────────────────────────
+        
         SpawnLabel(new Vector3(0.3f, 1.6f, -1.8f),
             "A′B′C′D′ là hình chiếu\nson song của ABCD theo Δ",
             Color.white, 2.3f);
@@ -122,7 +122,7 @@ public class Bai14Module1 : MonoBehaviour
         _running = false;
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────
+    
 
     void DrawPolyLoop(Vector3[] pts, Color c, float w)
     {

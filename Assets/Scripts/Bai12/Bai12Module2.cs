@@ -3,11 +3,11 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 2 — Điều kiện nhận biết d // (P)
-/// 4-bước animation: (P) → b trong P → a bên trên → a // b → kết luận a // (P)
-/// Space = next step, R = reset
-/// </summary>
+
+
+
+
+
 public class Bai12Module2 : MonoBehaviour
 {
     [Header("Màu")]
@@ -54,13 +54,13 @@ public class Bai12Module2 : MonoBehaviour
     {
         _busy = true;
         _step = 1;
-        // Mặt phẳng (P)
+        
         _plane = CreateQuad(Vector3.zero, new Vector3(3f, 1f, 2f), planeColor);
         _plane.transform.localScale = Vector3.zero;
         _plane.transform.DOScale(new Vector3(3f, 1f, 2f), 0.7f).SetEase(Ease.OutBack);
         yield return new WaitForSeconds(0.8f);
 
-        // Nhãn (P)
+        
         SpawnLabel(new Vector3(1.6f, 0.05f, 1.1f), "(P)", new Color(0.6f, 0.8f, 1f));
         SpawnLabel(new Vector3(0f, -0.6f, 0f), "[Space] → Bước tiếp", Color.gray, 1.5f);
         _busy = false;
@@ -69,7 +69,7 @@ public class Bai12Module2 : MonoBehaviour
     IEnumerator Step2()
     {
         _busy = true;
-        // Đường thẳng b nằm trong (P)
+        
         _lineB = CreateLine(new Vector3(-1.2f, 0.02f, 0f), new Vector3(1.2f, 0.02f, 0f), lineBColor);
         yield return new WaitForSeconds(0.3f);
         SpawnLabel(new Vector3(1.4f, 0.15f, 0f), "b ⊂ (P)", lineBColor);
@@ -80,7 +80,7 @@ public class Bai12Module2 : MonoBehaviour
     IEnumerator Step3()
     {
         _busy = true;
-        // Đường thẳng a bên trên, song song (P)
+        
         _lineA = CreateLine(new Vector3(-1.2f, 0.7f, 0f), new Vector3(1.2f, 0.7f, 0f), lineAColor);
         yield return new WaitForSeconds(0.3f);
         SpawnLabel(new Vector3(1.4f, 0.75f, 0f), "a", lineAColor);
@@ -92,11 +92,11 @@ public class Bai12Module2 : MonoBehaviour
     IEnumerator Step4()
     {
         _busy = true;
-        // Mũi tên song song giữa a và b
+        
         SpawnLabel(new Vector3(0f, 0.35f, 0.5f), "a // b", arrowColor, 2.5f);
         yield return new WaitForSeconds(0.6f);
 
-        // Kết quả
+        
         _resultLabel = new GameObject("Result");
         _resultLabel.transform.SetParent(transform);
         _resultLabel.transform.localPosition = new Vector3(0f, 1.3f, 0f);

@@ -16,7 +16,7 @@ public class module2 : MonoBehaviour
         Color gammaColor = new Color32(255, 50, 255, 80);
         Color highlightColor = new Color32(255, 255, 0, 255);
 
-        // Mặt phẳng Alpha (Y = 0.6) - tâm Z = 0
+        
         GameObject a1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-2, 0.6f, -1.5f)), alphaColor, " ", false));
         GameObject a2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, 0.6f, -1.5f)), alphaColor, " ", false));
         GameObject a3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, 0.6f,  1.5f)), alphaColor, "(P)", false));
@@ -29,7 +29,7 @@ public class module2 : MonoBehaviour
         else matAlpha.DOFade(0.4f, "_Color", 1f);
         yield return new WaitForSeconds(0.5f);
 
-        // Mặt phẳng Beta (Y = -0.4)
+        
         GameObject b1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-2, -0.4f, -1.5f)), betaColor, " ", false));
         GameObject b2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, -0.4f, -1.5f)), betaColor, " ", false));
         GameObject b3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, -0.4f,  1.5f)), betaColor, "(Q)", false));
@@ -42,11 +42,11 @@ public class module2 : MonoBehaviour
         else matBeta.DOFade(0.4f, "_Color", 1f);
         yield return new WaitForSeconds(0.8f);
 
-        // Mặt phẳng Gamma (nghiêng, bắt đầu ở trên rồi hạ xuống)
+        
         GameObject g1 = Fix(new GameObject("G1")); GameObject g2 = Fix(new GameObject("G2"));
         GameObject g3 = Fix(new GameObject("G3")); GameObject g4 = Fix(new GameObject("G4"));
 
-        // Vị trí ban đầu (trên cao)
+        
         g1.transform.position = transform.TransformPoint(new Vector3(-2.5f, gammaYOffset + 1.0f,  1.5f));
         g2.transform.position = transform.TransformPoint(new Vector3( 2.5f, gammaYOffset + 1.0f,  1.5f));
         g3.transform.position = transform.TransformPoint(new Vector3( 2.5f, gammaYOffset - 1.0f, -1.5f));
@@ -58,7 +58,7 @@ public class module2 : MonoBehaviour
         else matGamma.DOFade(0.4f, "_Color", 1f);
         yield return new WaitForSeconds(0.5f);
 
-        // Giao tuyến a và b (ẩn lúc đầu)
+        
         GameObject iA1 = Fix(GeoFactory.CreatePoint(new Vector3(0, -100, 0), highlightColor, "a", false));
         GameObject iA2 = Fix(GeoFactory.CreatePoint(new Vector3(0, -100, 0), highlightColor, " ", false));
         GameObject lineA = Fix(GeoFactory.CreateLine(iA1, iA2, highlightColor, 0.025f));
@@ -69,28 +69,28 @@ public class module2 : MonoBehaviour
         GameObject lineB = Fix(GeoFactory.CreateLine(iB1, iB2, highlightColor, 0.025f));
         lineB.GetComponent<EdgeFollower>().isAnimating = false;
 
-        // Animation hạ mặt phẳng Gamma xuống cắt qua Alpha và Beta
+        
         DOTween.To(() => gammaYOffset, x => gammaYOffset = x, 0.1f, 3.5f)
             .SetEase(Ease.InOutSine)
             .OnUpdate(() => {
-                // Cập nhật vị trí Gamma (tâm Z = 0)
+                
                 g1.transform.position = transform.TransformPoint(new Vector3(-2.5f, gammaYOffset + 1.0f,  1.5f));
                 g2.transform.position = transform.TransformPoint(new Vector3( 2.5f, gammaYOffset + 1.0f,  1.5f));
                 g3.transform.position = transform.TransformPoint(new Vector3( 2.5f, gammaYOffset - 1.0f, -1.5f));
                 g4.transform.position = transform.TransformPoint(new Vector3(-2.5f, gammaYOffset - 1.0f, -1.5f));
 
-                // Giao tuyến a với Alpha (Y = 0.6): z = -1.5 + (1.6f - gammaYOffset) * 1.5f
+                
                 float zA = -1.5f + (1.6f - gammaYOffset) * 1.5f;
                 UpdateIntersection(iA1, iA2, lineA, zA, 0.6f);
 
-                // Giao tuyến b với Beta (Y = -0.4)
+                
                 float zB = -1.5f + (0.6f - gammaYOffset) * 1.5f;
                 UpdateIntersection(iB1, iB2, lineB, zB, -0.4f);
             });
 
         yield return new WaitForSeconds(4.0f);
 
-        // Diegetic text a // b - giữa 2 mặt phẳng, tâm Z = 0
+        
         GameObject labelContainer = Fix(new GameObject("DiegeticText"));
         labelContainer.transform.localPosition = new Vector3(0, 0.1f, 0f);
         GeoFactory.CreateLabel(labelContainer.transform, "a // b", highlightColor);
@@ -100,7 +100,7 @@ public class module2 : MonoBehaviour
 
     void UpdateIntersection(GameObject p1, GameObject p2, GameObject line, float z, float y)
     {
-        // Ranh giới Z: -1.5 đến 1.5
+        
         if (z >= -1.5f && z <= 1.5f) {
             p1.transform.position = transform.TransformPoint(new Vector3(-2f, y, z));
             p2.transform.position = transform.TransformPoint(new Vector3( 2f, y, z));

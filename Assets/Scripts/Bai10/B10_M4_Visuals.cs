@@ -26,12 +26,12 @@ public class B10_M4_Visuals : MonoBehaviour
         
         if (autoPlayOnStart) {
             yield return new WaitForSeconds(1.0f); 
-            // Bắt đầu trình diễn từ gốc tọa độ của Prefab
+            
             StartCoroutine(Intro_Theory_10_4());
         }
     }
 
-    // Hàm trợ lý để neo Object vào Prefab cha
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
@@ -44,18 +44,18 @@ public class B10_M4_Visuals : MonoBehaviour
         float yPos = 1.0f; 
         float zPos = 3.5f;
 
-        // 1. TRÌNH DIỄN HÌNH CHÓP (Bên trái)
+        
         yield return StartCoroutine(Build_HinhChop_Full(origin + new Vector3(-3.2f, yPos, zPos)));
         
         yield return new WaitForSeconds(2.0f); 
 
-        // 2. TRÌNH DIỄN HÌNH TỨ DIỆN (Bên phải)
+        
         yield return StartCoroutine(Build_TuDien_Full(origin + new Vector3(3.2f, yPos, zPos)));
     }
 
-    // ==========================================
-    // 1. DỰNG HÌNH CHÓP S.ABCD (LOCALIZED)
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_HinhChop_Full(Vector3 localCenter)
     {
         TextMeshPro title = CreateDynamicTitle(localCenter + new Vector3(0, 2.5f, 0), "HÌNH CHÓP S.ABCD", whiteCyber);
@@ -88,15 +88,15 @@ public class B10_M4_Visuals : MonoBehaviour
         FadePlane(fSAB, 0.15f); FadePlane(fSBC, 0.15f); 
         FadePlane(fSCD, 0.15f); FadePlane(fSDA, 0.15f);
 
-        // Giám sát S dựa trên local Y của nó so với local Y của mặt đáy
+        
         StartCoroutine(MonitorPyramid(pS, localCenter.y, edges, title));
         
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // 2. DỰNG HÌNH TỨ DIỆN ABCD (LOCALIZED)
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_TuDien_Full(Vector3 localCenter)
     {
         CreateDynamicTitle(localCenter + new Vector3(0, 2.5f, 0), "HÌNH TỨ DIỆN ABCD", whiteCyber);
@@ -127,14 +127,14 @@ public class B10_M4_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // CÁC HÀM TIỆN ÍCH
-    // ==========================================
+    
+    
+    
 
     private IEnumerator MonitorPyramid(GameObject S, float localBaseY, GameObject[] edges, TextMeshPro title)
     {
         while (S != null) {
-            // Kiểm tra localPosition.y để đảm bảo hoạt động đúng khi di chuyển Prefab
+            
             float height = Mathf.Abs(S.transform.localPosition.y - localBaseY);
             if (height < 0.15f) {
                 title.text = "<color=red>LỖI: S không được nằm trên mặt đáy!</color>";

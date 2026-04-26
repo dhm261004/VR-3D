@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Đọc input từ cả bàn phím lẫn XR controller, expose qua static properties.
-// Tự tạo khi game bắt đầu — không cần drag vào scene.
+
+
 public class LessonInputBridge : MonoBehaviour
 {
     public static bool NextPressed { get; private set; }
@@ -20,14 +20,14 @@ public class LessonInputBridge : MonoBehaviour
 
     void Awake()
     {
-        // Space hoặc nút A (tay phải) / X (tay trái) → bước tiếp theo
+        
         _next = new InputAction("LessonNext");
         _next.AddBinding("<Keyboard>/space");
         _next.AddBinding("<XRController>{RightHand}/primaryButton");
         _next.AddBinding("<XRController>{LeftHand}/primaryButton");
         _next.Enable();
 
-        // R hoặc nút B (tay phải) / Y (tay trái) → reset
+        
         _reset = new InputAction("LessonReset");
         _reset.AddBinding("<Keyboard>/r");
         _reset.AddBinding("<XRController>{RightHand}/secondaryButton");

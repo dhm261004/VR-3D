@@ -56,7 +56,7 @@ public class ParallelPlanesLessonScenarioRuntime : MonoBehaviour
         didBindButtons = true;
     }
 
-    // You can also wire these methods directly from Button OnClick in Inspector.
+    
     public void OnPreviousButtonPressed() => GoToPreviousModule();
     public void OnNextButtonPressed() => GoToNextModule();
 

@@ -26,7 +26,7 @@ public class module2_thuchanh : MonoBehaviour
         Color gammaColor    = new Color32(255, 50, 255, 80); 
         Color highlightColor = new Color32(255, 255, 0, 255);
 
-        // Mặt phẳng Alpha (Y = 0.6) - tâm Z = 0
+        
         GameObject a1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-2, 0.6f, -1.5f)), alphaColor, " ", false));
         GameObject a2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, 0.6f, -1.5f)), alphaColor, " ", false));
         GameObject a3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 2, 0.6f,  1.5f)), alphaColor, "(P)", false));
@@ -45,13 +45,13 @@ public class module2_thuchanh : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        // Mặt phẳng Gamma (nghiêng, do cần gạt điều khiển)
+        
         g1 = Fix(new GameObject("G1")); g2 = Fix(new GameObject("G2"));
         g3 = Fix(new GameObject("G3")); g4 = Fix(new GameObject("G4"));
         GameObject faceGamma = Fix(GeoFactory.CreateFace(new GameObject[] { g1, g2, g3, g4 }, gammaColor));
         SetFaceAlpha(faceGamma, 0.5f);
 
-        // Giao tuyến (ẩn lúc đầu)
+        
         iA1 = Fix(GeoFactory.CreatePoint(new Vector3(0, -100, 0), highlightColor, "a", false));
         iA2 = Fix(GeoFactory.CreatePoint(new Vector3(0, -100, 0), highlightColor, " ", false));
         lineA = Fix(GeoFactory.CreateLine(iA1, iA2, highlightColor, 0.025f));
@@ -62,11 +62,11 @@ public class module2_thuchanh : MonoBehaviour
         lineB = Fix(GeoFactory.CreateLine(iB1, iB2, highlightColor, 0.025f));
         lineB.GetComponent<EdgeFollower>().isAnimating = false;
 
-        // Cần gạt - KHÔNG Fix() để XR Grab Interactable hoạt động bình thường
+        
         lever = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(0f, 1.3f, 0f)), new Color32(255, 50, 50, 255), "CẦN GẠT", true);
         lever.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
 
-        // UI Panel - đặt góc trên trái
+        
         GameObject uiPanel = Fix(new GameObject("UIPanel"));
         uiPanel.transform.localPosition = new Vector3(-2.0f, 2.2f, 0f);
         uiPanel.AddComponent<Billboard>();
@@ -93,17 +93,17 @@ public class module2_thuchanh : MonoBehaviour
     {
         if (lever == null) return;
 
-        // Lấy component để kiểm tra trạng thái grab
+        
         var ipvr = lever.GetComponent<InteractivePoint_VR>();
-        // Nếu XR đang cầm lão → không ghi đè vị trí, để tay cầm tự di chuyển
+        
         bool grabbing = ipvr != null && ipvr.IsGrabbed;
 
-        // Lưu local pos để tính cotTheta (ngay cả khi đang grab)
+        
         Vector3 pos = transform.InverseTransformPoint(lever.transform.position);
 
         if (!grabbing)
         {
-            // Ép cần gạt chỉ trượt theo trục X, giữ nguyên Y và Z
+            
             pos.y = 1.3f;
             pos.z = 0f;
             pos.x = Mathf.Clamp(pos.x, -2.5f, 2.5f);
@@ -111,13 +111,13 @@ public class module2_thuchanh : MonoBehaviour
         }
         else
         {
-            // Khi đang grab: chỉ clamp X để tính cotTheta, không đợi
+            
             pos.x = Mathf.Clamp(pos.x, -2.5f, 2.5f);
         }
 
         float cotTheta = pos.x * 0.5f;
 
-        // 4 góc của mặt phẳng Gamma (local, tâm Z = 0)
+        
         float zTop = 0f - cotTheta * 1.0f;
         float zBot = 0f + cotTheta * 1.0f;
 
@@ -126,11 +126,11 @@ public class module2_thuchanh : MonoBehaviour
         g3.transform.localPosition = new Vector3( 2.5f, -0.9f, zBot);
         g4.transform.localPosition = new Vector3(-2.5f, -0.9f, zBot);
 
-        // Giao tuyến a (Alpha Y = 0.6)
+        
         float zA = 0f - cotTheta * 0.5f;
         UpdateIntersection(iA1, iA2, lineA, zA, 0.6f);
 
-        // Giao tuyến b (Beta Y = -0.4)
+        
         float zB = 0f + cotTheta * 0.5f;
         UpdateIntersection(iB1, iB2, lineB, zB, -0.4f);
 
@@ -150,7 +150,7 @@ public class module2_thuchanh : MonoBehaviour
 
     void UpdateIntersection(GameObject p1, GameObject p2, GameObject line, float z, float y)
     {
-        // Z range: -1.5 đến 1.5
+        
         if (z >= -1.5f && z <= 1.5f) {
             p1.transform.localPosition = new Vector3(-2f, y, z);
             p2.transform.localPosition = new Vector3( 2f, y, z);

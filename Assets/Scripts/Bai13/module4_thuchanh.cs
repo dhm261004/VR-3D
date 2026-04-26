@@ -44,11 +44,11 @@ public class module4_thuchanh : MonoBehaviour
         Color alphaColor = new Color32(0, 150, 255, 100);
         Color betaColor  = new Color32(0, 255, 150, 100);
 
-        // 2 Mặt phẳng song song - Q nằm ở sàn
+        
         CreatePlane(2.0f, alphaColor, "(P)");
         CreatePlane(0.0f, betaColor, "(Q)");
 
-        // Tam giác đều ở đáy (Y = 0.2, tâm Z = 0)
+        
         Vector3 center = new Vector3(0, 0.0f, 0f);
         float R = 1.5f;
         posA = center + new Vector3(0, 0, R);
@@ -65,7 +65,7 @@ public class module4_thuchanh : MonoBehaviour
         edgeBC = CreateLineNoAnim(ptB, ptC, highlightColor, 0.02f);
         edgeCA = CreateLineNoAnim(ptC, ptA, highlightColor, 0.02f);
 
-        // Handle A' - KHÔNG Fix() để XR Grab hoạt động bình thường
+        
         Vector3 offset = new Vector3(1.0f, 2.0f, 0.5f);
         handleAprime = GeoFactory.CreatePoint(transform.TransformPoint(posA + offset), new Color32(255, 50, 50, 255), "Kéo A'", true);
         handleAprime.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
@@ -92,7 +92,7 @@ public class module4_thuchanh : MonoBehaviour
         measureAB = Fix(GeoFactory.CreateMeasure(ptA, ptB, Color.white));
         measureAprimeBprime = Fix(GeoFactory.CreateMeasure(handleAprime, ptBprime, Color.white));
 
-        // UI Panel
+        
         GameObject uiPanel = Fix(new GameObject("UIPanel"));
         uiPanel.transform.localPosition = new Vector3(-2f, 3.5f, 1.5f);
         uiPanel.AddComponent<Billboard>();
@@ -113,19 +113,19 @@ public class module4_thuchanh : MonoBehaviour
     {
         if (handleAprime == null) return;
 
-        // handleAprime ở world space (không Fix) → convert về local
+        
         Vector3 pAprime = transform.InverseTransformPoint(handleAprime.transform.position);
 
         bool grabbing = handleAprime.GetComponent<InteractivePoint_VR>()?.IsGrabbed ?? false;
 
-        // Chỉ ép Y = 2.0 khi KHÔNG đang bị grab
+        
         if (!grabbing && Mathf.Abs(pAprime.y - 2.0f) > 0.001f) {
             pAprime.y = 2.0f;
             handleAprime.transform.position = transform.TransformPoint(pAprime);
         }
 
-        // Tịnh tiến toàn bộ đáy trên theo offset của A'
-        Vector3 vecAAprime = pAprime - posA; // cả hai đều trong local space
+        
+        Vector3 vecAAprime = pAprime - posA; 
         ptBprime.transform.localPosition = posB + vecAAprime;
         ptCprime.transform.localPosition = posC + vecAAprime;
 
@@ -133,12 +133,12 @@ public class module4_thuchanh : MonoBehaviour
             ptDprime.transform.localPosition = posD + vecAAprime;
         }
         
-        // Cập nhật tâm O
+        
         if (state >= 2 && centerO != null) {
             centerO.transform.localPosition = (ptA.transform.localPosition + ptCprime.transform.localPosition) / 2f;
         }
 
-        // Đọc nút VR
+        
         bool currentVRButtonPressed = false;
         var devices = new System.Collections.Generic.List<UnityEngine.XR.InputDevice>();
         UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(UnityEngine.XR.InputDeviceCharacteristics.Controller, devices);
@@ -166,7 +166,7 @@ public class module4_thuchanh : MonoBehaviour
         Destroy(edgeCA); Destroy(edgeCprimeAprime); 
         Destroy(faceCAA);
 
-        // Tạo D và D' cho hình hộp
+        
         ptD = Fix(GeoFactory.CreatePoint(transform.TransformPoint(posD), highlightColor, "D", false));
         ptD.transform.DOScale(0.05f, 0.5f);
         
@@ -185,7 +185,7 @@ public class module4_thuchanh : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        // 4 đường chéo không gian
+        
         diagACprime = CreateLineNoAnim(ptA, ptCprime, diagColor, 0.015f);
         diagBDprime = CreateLineNoAnim(ptB, ptDprime, diagColor, 0.015f);
         diagCAprime = CreateLineNoAnim(ptC, handleAprime, diagColor, 0.015f);
@@ -193,7 +193,7 @@ public class module4_thuchanh : MonoBehaviour
 
         yield return new WaitForSeconds(1.0f);
 
-        // Tâm đối xứng O
+        
         centerO = Fix(GeoFactory.CreatePoint(
             (ptA.transform.position + ptCprime.transform.position) / 2f, Color.red, " ", false));
         centerO.transform.DOScale(0.08f, 0.5f).SetEase(Ease.OutBack);
@@ -214,7 +214,7 @@ public class module4_thuchanh : MonoBehaviour
 
     void CreatePlane(float yPos, Color color, string label)
     {
-        // Z: -2.0 đến 2.0 (tâm Z = 0)
+        
         GameObject p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-4, yPos, -2.0f)), color, " ", false));
         GameObject p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 4, yPos, -2.0f)), color, " ", false));
         GameObject p3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 4, yPos,  2.0f)), color, label, false));

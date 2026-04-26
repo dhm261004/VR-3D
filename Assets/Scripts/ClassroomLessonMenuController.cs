@@ -449,7 +449,7 @@ public class ClassroomLessonMenuController : MonoBehaviour
             case KeyCode.N: return keyboard.nKey.wasPressedThisFrame;
             case KeyCode.M: return keyboard.mKey.wasPressedThisFrame;
             default:
-                return keyboard.rKey.wasPressedThisFrame; // safe fallback
+                return keyboard.rKey.wasPressedThisFrame; 
         }
 #else
         return Input.GetKeyDown(replayKey);

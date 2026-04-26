@@ -7,10 +7,10 @@ public class module3_lythuyet : MonoBehaviour
 {
     private TextMeshPro uiStatusText;
 
-    // Chiều cao các mặt phẳng (local) - nâng lên và thu hẹp khoảng cách
-    private const float Y_P = 1.2f;   // Mặt phẳng P (trên)
-    private const float Y_Q = 0.75f;  // Mặt phẳng Q (giữa)
-    private const float Y_R = 0.3f;   // Mặt phẳng R (dưới) - đủ cao để không bị đất che
+    
+    private const float Y_P = 1.2f;   
+    private const float Y_Q = 0.75f;  
+    private const float Y_R = 0.3f;   
 
     IEnumerator Start()
     {
@@ -21,7 +21,7 @@ public class module3_lythuyet : MonoBehaviour
         Color gammaColor = new Color32(255, 50, 255, 80); 
         Color highlightColor = new Color32(255, 255, 0, 255);
 
-        // UI Panel
+        
         GameObject uiPanel = Fix(new GameObject("UIPanel"));
         uiPanel.transform.localPosition = new Vector3(-2f, 2.5f, 1.5f);
         uiPanel.AddComponent<Billboard>();
@@ -43,7 +43,7 @@ public class module3_lythuyet : MonoBehaviour
         uiStatusText.alignment = TextAlignmentOptions.TopLeft;
         uiStatusText.text = "Đang thiết lập không gian...";
 
-        // 3 Mặt phẳng song song - khoảng cách 0.45, đủ cao để không bị đất che
+        
         CreatePlane(Y_P, alphaColor, "(P)");
         CreatePlane(Y_Q, betaColor, "(Q)");
         CreatePlane(Y_R, gammaColor, "(R)");
@@ -51,12 +51,12 @@ public class module3_lythuyet : MonoBehaviour
         yield return new WaitForSeconds(1f);
         uiStatusText.text = "Tạo tia sáng cắt qua 3 mặt phẳng...";
 
-        // Cát tuyến cố định - điểm giao với 3 mặt phẳng
+        
         Vector3 A = new Vector3(-1.0f, Y_P, 0f);
         Vector3 B = new Vector3(-0.5f, Y_Q, 0f);
         Vector3 C = new Vector3( 0.0f, Y_R, 0f);
 
-        // Hiệu ứng bắn laser
+        
         GameObject laserPoint1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-1.5f, Y_P + 0.8f, 0f)), highlightColor, " ", false));
         GameObject laserPoint2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-1.5f, Y_P + 0.8f, 0f)), highlightColor, " ", false));
         GameObject lineLaser = Fix(GeoFactory.CreateLine(laserPoint1, laserPoint2, highlightColor, 0.03f));

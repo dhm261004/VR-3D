@@ -29,29 +29,29 @@ public class B11_M2_Visuals : MonoBehaviour
 
     private IEnumerator SpawnModule2Gallery()
     {
-        // Lấy vị trí của Prefab làm gốc tọa độ
+        
         Vector3 origin = transform.position;
         float zPos = 0f; float yPos = 0f; 
 
-        // 2.1: TÍNH DUY NHẤT
+        
         yield return StartCoroutine(Build_Uniqueness_Final(origin + new Vector3(-3.0f, yPos, zPos)));
         
         yield return new WaitForSeconds(2.0f); 
 
-        // 2.2: TÍNH BẮC CẦU
+        
         yield return StartCoroutine(Build_Transitivity_Book(origin + new Vector3(3.0f, yPos, zPos)));
     }
 
-    // Hàm trợ lý để tự động gán Object làm con của Prefab
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
     }
 
-    // ==========================================
-    // 2.1: TÍNH DUY NHẤT (Axiom of Playfair/Euclid)
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_Uniqueness_Final(Vector3 center)
     {
         CreateTitle(center + Vector3.up * 1.5f, "TÍNH DUY NHẤT", whiteCyber);
@@ -67,7 +67,7 @@ public class B11_M2_Visuals : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // Hiệu ứng quét radar tìm vị trí
+        
         GameObject pS1 = new GameObject("Scan1"); 
         GameObject pS2 = new GameObject("Scan2");
         pS1.transform.SetParent(pM.transform); 
@@ -81,7 +81,7 @@ public class B11_M2_Visuals : MonoBehaviour
         pM.transform.DORotate(new Vector3(0, 0, 720f), 2.5f, RotateMode.FastBeyond360).SetEase(Ease.InOutCubic);
         yield return new WaitForSeconds(2.6f);
 
-        // Kẻ đường m chính thức qua M
+        
         pM.transform.DORotate(Vector3.zero, 0.5f);
         yield return new WaitForSeconds(0.6f);
 
@@ -100,9 +100,9 @@ public class B11_M2_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // 2.2: TÍNH BẮC CẦU (Transitivity)
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_Transitivity_Book(Vector3 center)
     {
         CreateTitle(center + Vector3.up * 1.5f, "TÍNH BẮC CẦU", whiteCyber);
@@ -115,7 +115,7 @@ public class B11_M2_Visuals : MonoBehaviour
         AnimateLine(lineC);
         yield return new WaitForSeconds(animSpeed);
 
-        // Đường a và mp Alpha
+        
         GameObject pA1 = Fix(GeoFactory.CreatePoint(center + new Vector3(-1.2f, 0.8f, 0.5f), ptColor, "a1", true));
         GameObject pA2 = Fix(GeoFactory.CreatePoint(center + new Vector3(1.2f, 0.8f, 0.5f), ptColor, "a2", true));
         GameObject lineA = Fix(GeoFactory.CreateLine(pA1, pA2, edgeCyan));
@@ -126,7 +126,7 @@ public class B11_M2_Visuals : MonoBehaviour
         FadePlane(fAlpha, 0.2f);
         yield return new WaitForSeconds(animSpeed);
 
-        // Đường b và mp Beta
+        
         GameObject pB1 = Fix(GeoFactory.CreatePoint(center + new Vector3(-1.2f, -0.6f, 0.8f), ptColor, "b1", true));
         GameObject pB2 = Fix(GeoFactory.CreatePoint(center + new Vector3(1.2f, -0.6f, 0.8f), ptColor, "b2", true));
         GameObject lineB = Fix(GeoFactory.CreateLine(pB1, pB2, edgeGreen));
@@ -137,7 +137,7 @@ public class B11_M2_Visuals : MonoBehaviour
         FadePlane(fBeta, 0.2f);
         yield return new WaitForSeconds(2f);
 
-        // Kết luận
+        
         if(lineA != null) lineA.GetComponent<Renderer>().material.DOColor(yellowCyber, 1f);
         if(lineB != null) lineB.GetComponent<Renderer>().material.DOColor(yellowCyber, 1f);
         if(lineC != null) lineC.GetComponent<Renderer>().material.DOFade(0.2f, 1f);
@@ -147,11 +147,11 @@ public class B11_M2_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // --- TIỆN ÍCH ---
+    
     private void CreateTitle(Vector3 pos, string text, Color color) {
         GameObject anchor = new GameObject("Title_" + text.GetHashCode());
         anchor.transform.position = pos;
-        Fix(anchor); // Luôn Fix tiêu đề
+        Fix(anchor); 
         GeoFactory.CreateLabel(anchor.transform, text, color);
     }
 

@@ -17,14 +17,14 @@ public class module4_lythuyet : MonoBehaviour
         Color prismColor     = new Color32(255, 100, 200, 150);
         Color transparentGlass = new Color32(100, 200, 255, 60);
 
-        // 2 Mặt phẳng song song - nâng để Q không bị sàn che
-        // P: Y = 2.0, Q: Y = 0.0
+        
+        
         CreatePlane(2.0f, alphaColor, "(P)");
         CreatePlane(0.0f, betaColor, "(Q)");
         
         yield return new WaitForSeconds(1.0f);
 
-        // Tam giác đều ở đáy (Y = 0.0, tâm Z = 0)
+        
         Vector3 center = new Vector3(0, 0.0f, 0f);
         float R = 1.5f;
         Vector3 posA = center + new Vector3(0, 0, R);
@@ -48,7 +48,7 @@ public class module4_lythuyet : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // Đáy A'B'C' bắt đầu cùng vị trí với ABC
+        
         GameObject pA_prime = Fix(GeoFactory.CreatePoint(transform.TransformPoint(posA), highlightColor, "A'", false));
         GameObject pB_prime = Fix(GeoFactory.CreatePoint(transform.TransformPoint(posB), highlightColor, "B'", false));
         GameObject pC_prime = Fix(GeoFactory.CreatePoint(transform.TransformPoint(posC), highlightColor, "C'", false));
@@ -63,7 +63,7 @@ public class module4_lythuyet : MonoBehaviour
         edgeBprimeCprime.GetComponent<EdgeFollower>().isAnimating = false;
         edgeCprimeAprime.GetComponent<EdgeFollower>().isAnimating = false;
 
-        // Cạnh bên
+        
         GameObject edgeAA = Fix(GeoFactory.CreateLine(pA, pA_prime, prismColor, 0.025f));
         GameObject edgeBB = Fix(GeoFactory.CreateLine(pB, pB_prime, prismColor, 0.025f));
         GameObject edgeCC = Fix(GeoFactory.CreateLine(pC, pC_prime, prismColor, 0.025f));
@@ -71,13 +71,13 @@ public class module4_lythuyet : MonoBehaviour
         edgeBB.GetComponent<EdgeFollower>().isAnimating = false;
         edgeCC.GetComponent<EdgeFollower>().isAnimating = false;
 
-        // Mặt bên kính mờ
+        
         Fix(GeoFactory.CreateFace(new GameObject[] { pA, pB, pB_prime, pA_prime }, transparentGlass));
         Fix(GeoFactory.CreateFace(new GameObject[] { pB, pC, pC_prime, pB_prime }, transparentGlass));
         Fix(GeoFactory.CreateFace(new GameObject[] { pC, pA, pA_prime, pC_prime }, transparentGlass));
 
-        // Animation kéo đáy trên lên mặt Alpha
-        Vector3 upVector = new Vector3(1.0f, 2.8f, 0.5f); // chạm mặt phẳng P (Y=2.0)
+        
+        Vector3 upVector = new Vector3(1.0f, 2.8f, 0.5f); 
         pA_prime.transform.DOLocalMove(transform.InverseTransformPoint(transform.TransformPoint(posA) + upVector), 3f).SetEase(Ease.InOutQuad);
         pB_prime.transform.DOLocalMove(transform.InverseTransformPoint(transform.TransformPoint(posB) + upVector), 3f).SetEase(Ease.InOutQuad);
         pC_prime.transform.DOLocalMove(transform.InverseTransformPoint(transform.TransformPoint(posC) + upVector), 3f).SetEase(Ease.InOutQuad);
@@ -88,7 +88,7 @@ public class module4_lythuyet : MonoBehaviour
 
     GameObject CreatePlane(float yPos, Color color, string label)
     {
-        // Z: -2.0 đến 2.0 (tâm Z = 0)
+        
         GameObject p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-3, yPos, -2.0f)), color, " ", false));
         GameObject p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 4, yPos, -2.0f)), color, " ", false));
         GameObject p3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 4, yPos,  2.0f)), color, label, false));

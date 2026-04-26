@@ -6,10 +6,10 @@ public static class GeoFactory
 {
     private static Dictionary<string, Material> _mats = new Dictionary<string, Material>();
     
-    // --- THÊM MỚI: Bộ nhớ đệm quản lý các thư mục ảo ---
+    
     private static Dictionary<string, Transform> _groups = new Dictionary<string, Transform>();
 
-    // Hàm tự động tìm hoặc tạo thư mục ảo trong Hierarchy
+    
     private static Transform GetGroup(string groupName) {
         if (!_groups.ContainsKey(groupName) || _groups[groupName] == null) {
             GameObject g = GameObject.Find(groupName);
@@ -56,7 +56,7 @@ public static class GeoFactory
         p.transform.localScale = Vector3.zero; 
         p.GetComponent<Renderer>().sharedMaterial = GetMat(c, true);
         
-        // Nhét vào thư mục [POINTS]
+        
         p.transform.SetParent(GetGroup("[POINTS]"));
 
         if (isDraggable) {
@@ -75,7 +75,7 @@ public static class GeoFactory
         p.transform.localScale = Vector3.zero; 
         p.GetComponent<Renderer>().sharedMaterial = GetMat(c, true);
         
-        // Nhét vào thư mục [POINTS]
+        
         p.transform.SetParent(GetGroup("[POINTS]"));
 
         if (isDraggable) {
@@ -94,7 +94,7 @@ public static class GeoFactory
         
         l.transform.localScale = new Vector3(w, 0, w); 
         
-        // Nhét vào thư mục [EDGES]
+        
         l.transform.SetParent(GetGroup("[EDGES]"));
         
         var f = l.AddComponent<EdgeFollower>();
@@ -110,7 +110,7 @@ public static class GeoFactory
         Material mat = GetMat(c, false, 0f); 
         f.AddComponent<MeshRenderer>().sharedMaterial = mat;
         
-        // Nhét vào thư mục [FACES]
+        
         f.transform.SetParent(GetGroup("[FACES]"));
         
         var fFollow = f.AddComponent<FaceFollower>();
@@ -123,7 +123,7 @@ public static class GeoFactory
     public static void CreateLabel(Transform target, string txt, Color c) {
         GameObject l = new GameObject("Label_" + txt);
         
-        // Nhét vào thư mục [LABELS] (Thay vì trôi nổi tự do)
+        
         l.transform.SetParent(GetGroup("[LABELS]"));
         
         var follower = l.AddComponent<PositionFollower>();
@@ -141,7 +141,7 @@ public static class GeoFactory
     public static GameObject CreateMeasure(GameObject p1, GameObject p2, Color c) {
         GameObject m = new GameObject($"Measure_{p1.name}_{p2.name}");
         
-        // Nhét vào thư mục [MEASURES]
+        
         m.transform.SetParent(GetGroup("[MEASURES]"));
         
         GameObject line = CreateLine(p1, p2, c, 0.003f); 

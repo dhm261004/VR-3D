@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 3 — Hình biểu diễn của hình không gian
-/// Step 1 (auto) : Vòng tròn (đĩa) xuất hiện
-/// Step 2 (Space): Chiếu → Elip trên sàn
-/// Step 3 (Space): Khối lập phương xuất hiện
-/// Step 4 (Space): Chiếu → bóng hình bình hành
-/// Step 5 (Space): Ẩn cũ, hiện grid + chữ E phẳng (2D)
-/// Step 6 (Space): Extrude chữ E lên 3D (nét đứt + nét liền)
-/// Step 7 (Space): Pháo hoa hoàn thành chương
-/// R = reset
-/// </summary>
+
+
+
+
+
+
+
+
+
+
+
 public class Bai14Module3 : MonoBehaviour
 {
     [Header("Màu")]
@@ -31,14 +31,14 @@ public class Bai14Module3 : MonoBehaviour
 
     private static readonly Vector3 Delta = new Vector3(1f, -2f, 0.5f);
 
-    // Phương chiều sâu cho extrude chữ E (oblique)
+    
     private static readonly Vector3 ExtrudeDir = new Vector3(0.35f, 0f, -0.5f);
     private const float ExtrudeLen = 1f;
 
     private int  _step;
     private bool _busy;
 
-    // Objects cần ẩn khi chuyển sang phần E
+    
     private readonly List<GameObject> _phase1Objects = new List<GameObject>();
 
     void Start() => StartCoroutine(Step1());
@@ -71,7 +71,7 @@ public class Bai14Module3 : MonoBehaviour
         StartCoroutine(Step1());
     }
 
-    // ── Step 1: Sàn + vòng tròn ──────────────────────────────────────────
+    
     IEnumerator Step1()
     {
         _busy = true; _step = 1;
@@ -82,7 +82,7 @@ public class Bai14Module3 : MonoBehaviour
         _phase1Objects.Add(floor);
         yield return new WaitForSeconds(0.7f);
 
-        // Vòng tròn tại y = 1.5, bán kính 0.9
+        
         var circle = MakeCircleXZ(new Vector3(-1.2f, 1.5f, 0f), 0.9f, 64, circleColor, 0.05f);
         _phase1Objects.Add(circle);
         yield return new WaitForSeconds(0.3f);
@@ -92,12 +92,12 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 2: Chiếu vòng tròn → Elip ───────────────────────────────────
+    
     IEnumerator Step2()
     {
         _busy = true;
 
-        // Tia sáng từ 8 điểm trên vòng tròn
+        
         Vector3 center = new Vector3(-1.2f, 1.5f, 0f);
         const int rayCount = 8;
         for (int i = 0; i < rayCount; i++)
@@ -108,12 +108,12 @@ public class Bai14Module3 : MonoBehaviour
         }
         yield return new WaitForSeconds(0.6f);
 
-        // Elip = chiếu từng điểm của vòng tròn xuống sàn
+        
         var ellipseGO = MakeProjectedCircleXZ(center, 0.9f, 64, ellipseColor, 0.06f);
         _phase1Objects.Add(ellipseGO);
         yield return new WaitForSeconds(0.4f);
 
-        // Label kết luận
+        
         var lbl = MakeLabelGO(new Vector3(-1.2f, 0.6f, 0f),
             "Hình biểu diễn\ncủa hình tròn là Elip", Color.white, 2.2f);
         lbl.transform.localScale = Vector3.zero;
@@ -124,7 +124,7 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 3: Khối lập phương xuất hiện ───────────────────────────────
+    
     IEnumerator Step3()
     {
         _busy = true;
@@ -140,14 +140,14 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 4: Chiếu khối lập phương → bóng bình hành ──────────────────
+    
     IEnumerator Step4()
     {
         _busy = true;
 
         Vector3 o = new Vector3(1.5f, 0.8f, -0.4f);
         float   s = 0.8f;
-        // 8 đỉnh của khối
+        
         Vector3[] verts =
         {
             o,                         o + new Vector3(s,0,0),
@@ -156,11 +156,11 @@ public class Bai14Module3 : MonoBehaviour
             o + new Vector3(s,s,s),    o + new Vector3(0,s,s),
         };
 
-        // Chiếu từng đỉnh
+        
         var proj = new Vector3[8];
         for (int i = 0; i < 8; i++) proj[i] = ProjectToFloor(verts[i]);
 
-        // Vẽ bóng (convex hull 4 điểm đáy + 4 điểm đỉnh)
+        
         var topShadow = new Vector3[] { proj[4], proj[5], proj[6], proj[7] };
         DrawPolyLoop(topShadow, shadowColor, 0.05f);
         yield return new WaitForSeconds(0.4f);
@@ -176,21 +176,21 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 5: Ẩn phase 1, hiện grid + chữ E phẳng ─────────────────────
+    
     IEnumerator Step5()
     {
         _busy = true;
 
-        // Fade out các object cũ
+        
         foreach (var g in _phase1Objects)
             if (g != null) g.transform.DOScale(Vector3.zero, 0.3f);
         yield return new WaitForSeconds(0.4f);
 
-        // Grid trên sàn
+        
         SpawnGrid(new Vector3(-2f, 0.01f, -2f), 6, 6, 0.5f);
         yield return new WaitForSeconds(0.3f);
 
-        // Chữ E phẳng 2D (trong mặt phẳng xz tại y ≈ 0.02)
+        
         DrawFlatE(Vector3.up * 0.02f, eFrontColor, 0.05f);
         yield return new WaitForSeconds(0.4f);
 
@@ -201,17 +201,17 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 6: Extrude chữ E → khối 3D ─────────────────────────────────
+    
     IEnumerator Step6()
     {
         _busy = true;
 
-        // Vẽ mặt sau (E dịch theo ExtrudeDir)
+        
         Vector3 offset = ExtrudeDir.normalized * ExtrudeLen;
         DrawFlatE(offset + Vector3.up * 0.02f, eBackColor, 0.04f);
         yield return new WaitForSeconds(0.2f);
 
-        // Cạnh nối mặt trước – mặt sau (animate từng cạnh)
+        
         var frontPts = GetEOutlineXZ();
         for (int i = 0; i < frontPts.Length; i++)
         {
@@ -225,7 +225,7 @@ public class Bai14Module3 : MonoBehaviour
         }
         yield return new WaitForSeconds(0.4f);
 
-        // Label kết luận
+        
         var result = MakeLabelGO(new Vector3(0f, 2f, -0.5f),
             "Khối chữ E 3D hoàn chỉnh!\nDùng phép chiếu song song\nđể vẽ hình không gian.",
             new Color(0.2f, 1f, 0.5f), 2.5f);
@@ -237,7 +237,7 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 7: Pháo hoa ─────────────────────────────────────────────────
+    
     IEnumerator Step7()
     {
         _busy = true;
@@ -248,7 +248,7 @@ public class Bai14Module3 : MonoBehaviour
         banner.transform.localScale = Vector3.zero;
         banner.transform.DOScale(Vector3.one * 1.15f, 0.55f).SetEase(Ease.OutBack);
 
-        // Pháo hoa: spawn cầu nhỏ màu bay ra xung quanh
+        
         Color[] fireworkColors = {
             Color.red, Color.cyan, Color.yellow, Color.green,
             new Color(1f,0.5f,0f), Color.magenta, Color.white
@@ -281,9 +281,9 @@ public class Bai14Module3 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Geometry Helpers ─────────────────────────────────────────────────
+    
 
-    // Profile chữ E (x, z) — outline ngược chiều kim đồng hồ
+    
     Vector2[] GetEOutlineXZ()
     {
         return new Vector2[]
@@ -321,17 +321,17 @@ public class Bai14Module3 : MonoBehaviour
         lr.material = MakeMat(c);
     }
 
-    // Edge index i → hidden nếu nằm phía "sau" so với ExtrudeDir
-    // (Quy ước: cạnh bên trái của E là hidden khi nhìn từ góc hơi nghiêng phải)
+    
+    
     bool IsHiddenEdge(int i, int total)
     {
-        // Cạnh bên trái (x ≈ 0) là hidden
+        
         var pts = GetEOutlineXZ();
         float x = pts[i % pts.Length].x;
         return x < 0.05f;
     }
 
-    // Hình tròn xz tại center, radius r, n phân đoạn
+    
     GameObject MakeCircleXZ(Vector3 center, float r, int n, Color c, float w)
     {
         var go = new GameObject("Circle");
@@ -349,7 +349,7 @@ public class Bai14Module3 : MonoBehaviour
         return go;
     }
 
-    // Chiếu vòng tròn xuống sàn → elip
+    
     GameObject MakeProjectedCircleXZ(Vector3 center, float r, int n, Color c, float w)
     {
         var go = new GameObject("Ellipse");
@@ -368,7 +368,7 @@ public class Bai14Module3 : MonoBehaviour
         return go;
     }
 
-    // 12 cạnh của khối lập phương wireframe
+    
     List<GameObject> MakeCubeWireframe(Vector3 o, float s, Color c, float w)
     {
         var list = new List<GameObject>();
@@ -381,9 +381,9 @@ public class Bai14Module3 : MonoBehaviour
         };
         int[,] edges =
         {
-            {0,1},{1,2},{2,3},{3,0}, // đáy
-            {4,5},{5,6},{6,7},{7,4}, // đỉnh
-            {0,4},{1,5},{2,6},{3,7}  // cột
+            {0,1},{1,2},{2,3},{3,0}, 
+            {4,5},{5,6},{6,7},{7,4}, 
+            {0,4},{1,5},{2,6},{3,7}  
         };
         for (int e = 0; e < edges.GetLength(0); e++)
             list.Add(DrawLineGO(v[edges[e,0]], v[edges[e,1]], c, w));
@@ -453,7 +453,7 @@ public class Bai14Module3 : MonoBehaviour
         return go;
     }
 
-    // Nét đứt: nhiều đoạn ngắn xen kẽ khoảng trống
+    
     void DrawDashedLine(Vector3 from, Vector3 to, Color c, float w, float dashLen, float gapLen)
     {
         float totalLen = Vector3.Distance(from, to);

@@ -15,12 +15,12 @@ public class module3_thuchanh : MonoBehaviour
     private void OnDisable() => CleanupDetachedRuntimeObjects();
     private void OnDestroy() => CleanupDetachedRuntimeObjects();
 
-    // Chiều cao các mặt phẳng (local) - khớp với module3_lythuyet
+    
     private const float Y_P = 1.2f;
     private const float Y_Q = 0.75f;
     private const float Y_R = 0.3f;
 
-    // Cát tuyến cố định 1 - giao điểm với 3 mặt phẳng tại Z=0
+    
     private Vector3 A = new Vector3(-1.0f, Y_P, 0f);
     private Vector3 B = new Vector3(-0.5f, Y_Q, 0f);
     private Vector3 C = new Vector3( 0.0f, Y_R, 0f);
@@ -35,12 +35,12 @@ public class module3_thuchanh : MonoBehaviour
         Color highlightColor = new Color32(255, 255, 0, 255);
         Color rodColor   = new Color32(255, 100, 100, 255);
 
-        // 3 Mặt phẳng song song
+        
         CreatePlane(Y_P, alphaColor, "(P)");
         CreatePlane(Y_Q, betaColor, "(Q)");
         CreatePlane(Y_R, gammaColor, "(R)");
 
-        // Cát tuyến 1 (cố định)
+        
         GameObject l1p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(-1.5f, Y_P + 0.8f, 0f)), highlightColor, " ", false));
         GameObject l1p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(new Vector3( 0.5f, Y_R - 0.8f, 0f)), highlightColor, " ", false));
         GameObject line1 = Fix(GeoFactory.CreateLine(l1p1, l1p2, highlightColor, 0.02f));
@@ -50,7 +50,7 @@ public class module3_thuchanh : MonoBehaviour
         Fix(GeoFactory.CreatePoint(transform.TransformPoint(B), highlightColor, "B", false)).transform.localScale = Vector3.one * 0.04f;
         Fix(GeoFactory.CreatePoint(transform.TransformPoint(C), highlightColor, "C", false)).transform.localScale = Vector3.one * 0.04f;
 
-        // Cát tuyến 2 (kéo được) - KHÔNG Fix() để XR Grab hoạt động bình thường
+        
         handleTop = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(1.0f, Y_P + 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
         handleBot = GeoFactory.CreatePoint(transform.TransformPoint(new Vector3(1.5f, Y_R - 0.3f, 0f)), new Color32(255, 50, 50, 255), "Kéo", true);
         handleTop.transform.DOScale(0.1f, 0.5f).SetEase(Ease.OutBack);
@@ -66,7 +66,7 @@ public class module3_thuchanh : MonoBehaviour
 
         startHandlePos = transform.InverseTransformPoint(handleTop.transform.position);
 
-        // UI Panel
+        
         GameObject uiPanel = Fix(new GameObject("UIPanel"));
         uiPanel.transform.localPosition = new Vector3(0, Y_P + 1.6f, 1.5f);
         uiPanel.AddComponent<Billboard>();
@@ -96,14 +96,14 @@ public class module3_thuchanh : MonoBehaviour
     {
         if (handleTop == null || handleBot == null) return;
 
-        // Handles ở world space (không Fix) → convert về local để tính toán
+        
         Vector3 pT = transform.InverseTransformPoint(handleTop.transform.position);
         Vector3 pB = transform.InverseTransformPoint(handleBot.transform.position);
 
         bool grabbingTop = handleTop.GetComponent<InteractivePoint_VR>()?.IsGrabbed ?? false;
         bool grabbingBot = handleBot.GetComponent<InteractivePoint_VR>()?.IsGrabbed ?? false;
 
-        // Chỉ ép constraint khi KHÔNG đang bị grab
+        
         if (!grabbingTop && pT.y < Y_P + 0.1f) {
             pT.y = Y_P + 0.1f;
             handleTop.transform.position = transform.TransformPoint(pT);
@@ -113,9 +113,9 @@ public class module3_thuchanh : MonoBehaviour
             handleBot.transform.position = transform.TransformPoint(pB);
         }
 
-        // Tính giao điểm A', B', C' với 3 mặt phẳng (trong local space)
+        
         float dy = pB.y - pT.y;
-        if (Mathf.Abs(dy) < 0.01f) return; // tránh chia cho 0
+        if (Mathf.Abs(dy) < 0.01f) return; 
 
         float tA = (Y_P - pT.y) / dy;
         Vector3 Aprime = pT + tA * (pB - pT);
@@ -129,7 +129,7 @@ public class module3_thuchanh : MonoBehaviour
         Vector3 Cprime = pT + tC * (pB - pT);
         ptCprime.transform.localPosition = Cprime;
 
-        // Tỉ lệ Thales
+        
         float AB = Vector3.Distance(A, B);
         float BC = Vector3.Distance(B, C);
         float AC = Vector3.Distance(A, C);

@@ -26,11 +26,11 @@ public class B10_M5_Visuals : MonoBehaviour
     {
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
         yield return new WaitForSeconds(1.0f);
-        // Bắt đầu tại vị trí của Prefab
+        
         StartCoroutine(Solve_Example6_FullColor(Vector3.zero));
     }
 
-    // Hàm trợ lý để neo Object vào Prefab cha
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
@@ -39,12 +39,12 @@ public class B10_M5_Visuals : MonoBehaviour
 
     private IEnumerator Solve_Example6_FullColor(Vector3 localCenter)
     {
-        // 1. HIỂN THỊ ĐỀ BÀI
+        
         _problemText = CreateDynamicTitle(localCenter + new Vector3(-2.8f, 2.5f, 0), 
             "<color=#00FFFF>VÍ DỤ 6:</color>\nCho tứ diện ABCD.\n- E nằm trong tam giác BCD.\n- F nằm giữa A và E.\n<color=#FFD700>Tìm N = BF \u2229 (ACD)</color>", 
             whiteCyber, 1.1f, TextAlignmentOptions.Left);
 
-        // 2. DỰNG TỨ DIỆN ABCD
+        
         _instructionText = CreateDynamicTitle(localCenter + new Vector3(0, 2.8f, 0), "Bước 1: Dựng hình tứ diện đặc ABCD", whiteCyber);
         
         GameObject pA = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localCenter + new Vector3(0, 1.8f, 0)), whiteCyber, "A", false));
@@ -69,7 +69,7 @@ public class B10_M5_Visuals : MonoBehaviour
 
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 3. XÁC ĐỊNH ĐIỂM E VÀ DỰNG M
+        
         _instructionText.text = "Bước 2: Lấy E trong mp(BCD). Kẻ BE cắt CD tại M";
         Vector3 localE = localCenter + new Vector3(0.2f, 0, -0.3f); 
         GameObject pE = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localE), whiteCyber, "E", false));
@@ -83,7 +83,7 @@ public class B10_M5_Visuals : MonoBehaviour
         AnimateLine(Fix(GeoFactory.CreateLine(pB, pM, edgePink, 0.005f)), stepSpeed);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 4. XÁC ĐỊNH ĐIỂM F
+        
         _instructionText.text = "Bước 3: Lấy F nằm giữa A và E (F thuộc AE)";
         AnimateLine(Fix(GeoFactory.CreateLine(pA, pE, edgePink, 0.005f)), stepSpeed);
         Vector3 worldF = Vector3.Lerp(pA.transform.position, pE.transform.position, 0.5f);
@@ -91,7 +91,7 @@ public class B10_M5_Visuals : MonoBehaviour
         pF.transform.DOScale(0.04f, stepSpeed);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 5. CHỌN MẶT PHẲNG PHỤ (ABM)
+        
         _instructionText.text = "Bước 4: Xét mp phụ (ABM) chứa đường thẳng BF";
         _instructionText.color = edgeYellow;
         GameObject faceABM = Fix(GeoFactory.CreateFace(new[] { pA, pB, pM }, planeAux));
@@ -101,7 +101,7 @@ public class B10_M5_Visuals : MonoBehaviour
         AnimateLine(lineAM, stepSpeed);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 6. TÌM GIAO ĐIỂM N
+        
         _instructionText.text = "Bước 5: Trong mp(ABM), BF cắt AM tại N";
         Vector3 worldN = GetLineLineIntersection(pB.transform.position, pF.transform.position, pA.transform.position, pM.transform.position);
         GameObject pN = Fix(GeoFactory.CreatePoint(worldN, edgeYellow, "N", false));
@@ -110,12 +110,12 @@ public class B10_M5_Visuals : MonoBehaviour
         AnimateLine(Fix(GeoFactory.CreateLine(pB, pN, edgePink, 0.015f)), stepSpeed); 
         yield return new WaitForSeconds(1.0f);
 
-        // 7. KẾT LUẬN
+        
         _instructionText.text = "<color=#FFD700>KẾT LUẬN: N chính là giao điểm của BF và (ACD)</color>";
         pN.transform.DOPunchScale(Vector3.one * 0.05f, 0.5f).SetLoops(4);
     }
 
-    // --- TOÁN HỌC ---
+    
     private Vector3 GetLineLineIntersection(Vector3 a1, Vector3 a2, Vector3 b1, Vector3 b2) {
         Vector3 da = a2 - a1; Vector3 db = b2 - b1; Vector3 dc = b1 - a1;
         float s = Vector3.Dot(Vector3.Cross(dc, db), Vector3.Cross(da, db)) / Vector3.Cross(da, db).sqrMagnitude;
@@ -129,7 +129,7 @@ public class B10_M5_Visuals : MonoBehaviour
         return origin + dir * t;
     }
 
-    // --- TIỆN ÍCH ---
+    
     private TextMeshPro CreateDynamicTitle(Vector3 localPos, string text, Color color, float size = 1.8f, TextAlignmentOptions align = TextAlignmentOptions.Center) {
         GameObject anchor = new GameObject("Label_" + text.GetHashCode());
         Fix(anchor);

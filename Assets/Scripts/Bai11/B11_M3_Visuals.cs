@@ -12,9 +12,9 @@ public class B11_M3_Visuals : MonoBehaviour
     private Color yellowCyber = new Color32(255, 215, 0, 255); 
     private Color whiteCyber = new Color32(255, 255, 255, 255); 
     
-    private Color planeCyan = new Color32(0, 255, 255, 30);   // (P)
-    private Color planePink = new Color32(255, 0, 128, 30);   // (Q)
-    private Color planeYellow = new Color32(255, 215, 0, 30); // (R)
+    private Color planeCyan = new Color32(0, 255, 255, 30);   
+    private Color planePink = new Color32(255, 0, 128, 30);   
+    private Color planeYellow = new Color32(255, 215, 0, 30); 
 
     [Header("Điều khiển Nhịp độ (Pacing)")]
     public float animSpeed = 1.5f; 
@@ -35,47 +35,47 @@ public class B11_M3_Visuals : MonoBehaviour
 
     private IEnumerator SpawnModule3Gallery()
     {
-        // Lấy vị trí của Prefab làm gốc
+        
         Vector3 origin = transform.position;
         float zPos = 0f; 
         float yPos = 0f;
 
-        // Trường hợp 1: Đồng quy
+        
         yield return StartCoroutine(Build_DongQuy(origin + new Vector3(-3.5f, yPos, zPos)));
         
         yield return new WaitForSeconds(3.0f); 
         
-        // Trường hợp 2: Song song
+        
         yield return StartCoroutine(Build_SongSong(origin + new Vector3(3.5f, yPos, zPos)));
     }
 
-    // Hàm trợ lý để tự động gom con vào Prefab
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
     }
 
-    // ==========================================
-    // TRƯỜNG HỢP 1: BA GIAO TUYẾN ĐỒNG QUY
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_DongQuy(Vector3 center)
     {
         CreateTitle(center + new Vector3(0, 1.8f, 0), "TRƯỜNG HỢP 1:\nBA GIAO TUYẾN ĐỒNG QUY", whiteCyber);
 
-        // Mặt phẳng (P)
+        
         GameObject p_P1 = CreateCorner(center + new Vector3(1.2f, 0.5f, 1.2f));
         GameObject p_P2 = CreateCorner(center + new Vector3(-1.2f, 0.5f, 1.2f));
         GameObject p_P3 = CreateCorner(center + new Vector3(-1.2f, 0.5f, -1.2f));
         GameObject p_P4 = CreateCorner(center + new Vector3(1.2f, 0.5f, -1.2f));
         
-        // Mặt phẳng (Q)
+        
         GameObject p_Q1 = CreateCorner(center + new Vector3(1.2f, 1.5f, 0f));
         GameObject p_Q2 = CreateCorner(center + new Vector3(-1.2f, 1.5f, 0f));
         GameObject p_Q3 = CreateCorner(center + new Vector3(-1.2f, -0.5f, 0f));
         GameObject p_Q4 = CreateCorner(center + new Vector3(1.2f, -0.5f, 0f));
 
-        // Mặt phẳng (R)
+        
         GameObject p_R1 = CreateCorner(center + new Vector3(0f, 1.5f, 1.2f));
         GameObject p_R2 = CreateCorner(center + new Vector3(0f, 1.5f, -1.2f));
         GameObject p_R3 = CreateCorner(center + new Vector3(0f, -0.5f, -1.2f));
@@ -94,7 +94,7 @@ public class B11_M3_Visuals : MonoBehaviour
         
         yield return new WaitForSeconds(1.5f);
 
-        // Tạo và Fix giao tuyến
+        
         GameObject lineA = Fix(GeoFactory.CreateLine(CreateCorner(center + new Vector3(-1.2f, 0.5f, 0f)), CreateCorner(center + new Vector3(1.2f, 0.5f, 0f)), edgeCyan));
         GameObject lineB = Fix(GeoFactory.CreateLine(CreateCorner(center + new Vector3(0f, 0.5f, -1.2f)), CreateCorner(center + new Vector3(0f, 0.5f, 1.2f)), edgePink));
         GameObject lineC = Fix(GeoFactory.CreateLine(CreateCorner(center + new Vector3(0f, -0.5f, 0f)), CreateCorner(center + new Vector3(0f, 1.5f, 0f)), edgeYellow));
@@ -108,9 +108,9 @@ public class B11_M3_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // TRƯỜNG HỢP 2: BA GIAO TUYẾN SONG SONG
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_SongSong(Vector3 center)
     {
         CreateTitle(center + new Vector3(0, 1.8f, 0), "TRƯỜNG HỢP 2:\nBA GIAO TUYẾN SONG SONG", whiteCyber);

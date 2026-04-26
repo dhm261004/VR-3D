@@ -27,11 +27,11 @@ public class B11_M4_Visuals : MonoBehaviour
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
         yield return new WaitForSeconds(1.0f); 
 
-        // Gốc tọa độ chính là vị trí của Prefab
+        
         StartCoroutine(Execute_Example4_CorrectPoles(transform.position));
     }
 
-    // Hàm Fix để đảm bảo object luôn là con của Prefab này
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
@@ -40,16 +40,16 @@ public class B11_M4_Visuals : MonoBehaviour
 
     private IEnumerator Execute_Example4_CorrectPoles(Vector3 center)
     {
-        // Khởi tạo Root tại vị trí Prefab và gán làm con để khi di chuyển Prefab nó đi theo
+        
         _moduleRoot = new GameObject("Module_11_4_Container");
         _moduleRoot.transform.SetParent(this.transform);
         _moduleRoot.transform.position = center;
 
-        // 1. TIÊU ĐỀ
+        
         CreateDynamicTitle(new Vector3(0f, 3.8f, 0f), "VÍ DỤ 4: GIAO TUYẾN SONG SONG", whiteCyber, 1.5f);
         _instructionText = CreateDynamicTitle(new Vector3(0f, 3.1f, 0f), "Bước 1: Cho hình chóp S.ABCD (Đáy hình bình hành)", whiteCyber, 1.1f);
 
-        // 2. DỰNG CÁC ĐỈNH
+        
         float w = 1.2f; float d = 0.8f; float offset = 0.4f;
         GameObject pA = CreateAndParent(new Vector3(-w - offset, 0, -d), ptColor, "A", false);
         GameObject pB = CreateAndParent(new Vector3(w - offset, 0, -d), ptColor, "B", false);
@@ -69,18 +69,18 @@ public class B11_M4_Visuals : MonoBehaviour
         foreach(var e in edges) AnimateLine(e, stepSpeed);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 3. LẬP LUẬN
+        
         _instructionText.text = "Bước 2: S là điểm chung. Có AB // CD";
         edges[0].GetComponent<Renderer>().material.DOColor(edgeActive, "_BaseColor", stepSpeed);
         edges[2].GetComponent<Renderer>().material.DOColor(edgeActive, "_BaseColor", stepSpeed);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 4. DỰNG GIAO TUYẾN m
+        
         _instructionText.text = "Bước 3: Dựng giao tuyến m qua S và song song AB, CD";
         
         GameObject mAnchor = new GameObject("m_Stabilizer");
         mAnchor.transform.SetParent(_moduleRoot.transform);
-        mAnchor.transform.localPosition = new Vector3(0f, 2.0f, 0f); // Local Pos của S
+        mAnchor.transform.localPosition = new Vector3(0f, 2.0f, 0f); 
 
         Vector3 dirAB = (pB.transform.position - pA.transform.position).normalized;
         GameObject pM1 = new GameObject("m_ext_L"); 
@@ -96,7 +96,7 @@ public class B11_M4_Visuals : MonoBehaviour
         GeoFactory.CreateLabel(pM2.transform, "m", yellowCyber);
         yield return new WaitForSeconds(waitBetweenSteps);
 
-        // 5. MỞ RỘNG MẶT PHẲNG
+        
         _instructionText.text = "Bước 4: Mở rộng (SAB) và (SCD) hội tụ tại m";
         
         GameObject fSAB = Fix(GeoFactory.CreateFace(new[] { pA, pB, pM2, pM1 }, planeSAB));
@@ -109,9 +109,9 @@ public class B11_M4_Visuals : MonoBehaviour
         _instructionText.color = yellowCyber;
     }
 
-    // --- UTILS ĐÃ FIX TỌA ĐỘ ---
+    
     private GameObject CreateAndParent(Vector3 localPos, Color c, string n, bool drag) {
-        // Tính toán world pos dựa trên Root đã được đặt tại Prefab
+        
         Vector3 worldPos = _moduleRoot.transform.TransformPoint(localPos);
         GameObject p = GeoFactory.CreatePoint(worldPos, c, n, drag);
         p.transform.SetParent(_moduleRoot.transform);

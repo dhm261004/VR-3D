@@ -3,15 +3,15 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 2 — Tính chất phép chiếu song song
-/// Step 1 (auto) : Hình bình hành ABCD lơ lửng
-/// Step 2 (Space): Tia sáng + bóng A′B′C′D′
-/// Step 3 (Space): Nhãn A′B′∥C′D′, A′D′∥B′C′ → "luôn là hình bình hành"
-/// Step 4 (Space): Đo |AB| và |A′B′| → AB ≠ A′B′ (không bảo toàn độ dài)
-/// Step 5 (Space): Đo tỉ số AB/DC = A′B′/D′C′ = 1 (bảo toàn tỉ số)
-/// R = reset
-/// </summary>
+
+
+
+
+
+
+
+
+
 public class Bai14Module2 : MonoBehaviour
 {
     [Header("Màu")]
@@ -27,7 +27,7 @@ public class Bai14Module2 : MonoBehaviour
 
     private static readonly Vector3 Delta = new Vector3(1f, -2f, 0.5f);
 
-    // Hình bình hành ABCD nghiêng (các đỉnh ở độ cao khác nhau → AB ≠ A′B′)
+    
     private static readonly Vector3 A = new Vector3(-1.2f, 1.5f, -0.5f);
     private static readonly Vector3 B = new Vector3( 0.8f, 1.0f, -0.5f);
     private static readonly Vector3 C = new Vector3( 1.2f, 1.0f,  0.5f);
@@ -36,7 +36,7 @@ public class Bai14Module2 : MonoBehaviour
     private int  _step;
     private bool _busy;
 
-    // Cache hình chiếu để dùng lại ở các bước sau
+    
     private Vector3 _Ap, _Bp, _Cp, _Dp;
 
     void Start() => StartCoroutine(Step1());
@@ -66,7 +66,7 @@ public class Bai14Module2 : MonoBehaviour
         StartCoroutine(Step1());
     }
 
-    // ── Step 1: Sàn + hình bình hành ABCD ────────────────────────────────
+    
     IEnumerator Step1()
     {
         _busy = true; _step = 1;
@@ -76,7 +76,7 @@ public class Bai14Module2 : MonoBehaviour
         floor.transform.DOScale(floorScale, 0.6f).SetEase(Ease.OutBack);
         yield return new WaitForSeconds(0.7f);
 
-        // Mặt bình hành (Quad giả làm mặt, chỉ đẹp hơn đường viền)
+        
         DrawPoly(new[] { A, B, C, D }, edgeABCDColor, 0.06f);
         yield return new WaitForSeconds(0.4f);
 
@@ -90,7 +90,7 @@ public class Bai14Module2 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 2: Tia sáng + bóng A′B′C′D′ ────────────────────────────────
+    
     IEnumerator Step2()
     {
         _busy = true;
@@ -118,7 +118,7 @@ public class Bai14Module2 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 3: A′B′∥C′D′, A′D′∥B′C′ → kết luận ─────────────────────────
+    
     IEnumerator Step3()
     {
         _busy = true;
@@ -130,7 +130,7 @@ public class Bai14Module2 : MonoBehaviour
                    "A′D′ ∥ B′C′", conclusionColor, 2f);
         yield return new WaitForSeconds(0.6f);
 
-        // Kết luận nổi bật
+        
         var go = MakeLabelGO(new Vector3(0f, 1.8f, -0.3f),
             "Bóng của hình bình hành\nluôn là một hình bình hành!",
             conclusionColor, 2.8f);
@@ -141,7 +141,7 @@ public class Bai14Module2 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 4: Đo |AB| và |A′B′| → không bảo toàn ───────────────────────
+    
     IEnumerator Step4()
     {
         _busy = true;
@@ -149,21 +149,21 @@ public class Bai14Module2 : MonoBehaviour
         float lenAB  = Vector3.Distance(A, B);
         float lenApBp = Vector3.Distance(_Ap, _Bp);
 
-        // Highlight cạnh AB (màu xanh lá)
+        
         DrawLine(A, B, highlightAB, 0.1f);
         yield return new WaitForSeconds(0.3f);
         SpawnLabel((A + B) * 0.5f + new Vector3(0f, 0.2f, 0f),
                    $"|AB| = {lenAB:F2}", highlightAB, 2.2f);
         yield return new WaitForSeconds(0.7f);
 
-        // Highlight cạnh A′B′ (màu đỏ)
+        
         DrawLine(_Ap, _Bp, highlightABp, 0.1f);
         yield return new WaitForSeconds(0.3f);
         SpawnLabel((_Ap + _Bp) * 0.5f + new Vector3(0f, 0.15f, 0f),
                    $"|A′B′| = {lenApBp:F2}", highlightABp, 2.2f);
         yield return new WaitForSeconds(0.7f);
 
-        // Cảnh báo
+        
         var warn = MakeLabelGO(new Vector3(0f, 1.5f, -0.5f),
             "⚠  AB ≠ A′B′\nPhép chiếu KHÔNG bảo toàn độ dài!",
             new Color(1f, 0.4f, 0.1f), 2.5f);
@@ -174,7 +174,7 @@ public class Bai14Module2 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Step 5: Tỉ số AB/DC = A′B′/D′C′ = 1 → bảo toàn ─────────────────
+    
     IEnumerator Step5()
     {
         _busy = true;
@@ -203,7 +203,7 @@ public class Bai14Module2 : MonoBehaviour
         _busy = false;
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────
+    
 
     static Vector3 Project(Vector3 p)
     {

@@ -5,12 +5,12 @@ using DG.Tweening;
 public class B11_M1_Visuals : MonoBehaviour
 {
     [Header("Bảng màu Cyber Lab")]
-    private Color ptColor = new Color32(255, 0, 85, 255);       // Điểm (Neon Pink)
-    private Color d1Color = new Color32(0, 255, 255, 200);     // Đường d1 (Cyan)
-    private Color d2Color = new Color32(0, 255, 128, 200);     // Đường d2 (Lục)
-    private Color overlapColor = new Color32(255, 215, 0, 255); // Trùng nhau (Vàng)
-    private Color skewColor = new Color32(255, 69, 0, 255);    // Chéo nhau (Cam)
-    private Color whiteCyber = new Color32(255, 255, 255, 255); // Giao điểm
+    private Color ptColor = new Color32(255, 0, 85, 255);       
+    private Color d1Color = new Color32(0, 255, 255, 200);     
+    private Color d2Color = new Color32(0, 255, 128, 200);     
+    private Color overlapColor = new Color32(255, 215, 0, 255); 
+    private Color skewColor = new Color32(255, 69, 0, 255);    
+    private Color whiteCyber = new Color32(255, 255, 255, 255); 
 
     void Start()
     {
@@ -20,29 +20,29 @@ public class B11_M1_Visuals : MonoBehaviour
 
     IEnumerator SpawnPositionGallery()
     {
-        // QUAN TRỌNG: Lấy vị trí của chính Prefab làm gốc (Origin)
+        
         Vector3 origin = transform.position;
-        float z = 0f; // Chỉnh lại z=0 nếu bạn muốn nó nằm ngay trên mặt phẳng Prefab
+        float z = 0f; 
         float y = 0f; 
         float spacing = 4.0f;
 
-        // 1. CẮT NHAU
+        
         Build_Intersecting(origin + new Vector3(-spacing * 1.5f, y, z));
         yield return new WaitForSeconds(0.3f);
 
-        // 2. SONG SONG
+        
         Build_Parallel(origin + new Vector3(-spacing * 0.5f, y, z));
         yield return new WaitForSeconds(0.3f);
 
-        // 3. TRÙNG NHAU
+        
         Build_Coincident(origin + new Vector3(spacing * 0.5f, y, z));
         yield return new WaitForSeconds(0.3f);
 
-        // 4. CHÉO NHAU
+        
         Build_Skew(origin + new Vector3(spacing * 1.5f, y, z));
     }
 
-    // Hàm trợ lý để tự động gán Object làm con của Prefab
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
@@ -109,7 +109,7 @@ public class B11_M1_Visuals : MonoBehaviour
     {
         GameObject anchor = new GameObject("Title_" + text.Replace("\n", "_"));
         anchor.transform.position = pos;
-        Fix(anchor); // Đưa tiêu đề vào làm con Prefab
+        Fix(anchor); 
         GeoFactory.CreateLabel(anchor.transform, text, color);
     }
 

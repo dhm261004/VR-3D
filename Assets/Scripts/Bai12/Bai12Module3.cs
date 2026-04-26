@@ -3,10 +3,10 @@ using System.Collections;
 using DG.Tweening;
 using TMPro;
 
-/// <summary>
-/// Module 3 — Tính chất: a // (P), (Q) chứa a, (Q) ∩ (P) = b → a // b
-/// 5-bước animation. Space = next step, R = reset.
-/// </summary>
+
+
+
+
 public class Bai12Module3 : MonoBehaviour
 {
     [Header("Màu")]
@@ -50,13 +50,13 @@ public class Bai12Module3 : MonoBehaviour
     IEnumerator Step1()
     {
         _busy = true; _step = 1;
-        // Mặt phẳng (P)
+        
         var p = MakeQuad(new Vector3(0, 0, 0), new Vector3(3.5f, 1f, 2.5f), planePColor, 0f);
         p.transform.DOScale(new Vector3(3.5f, 1f, 2.5f), 0.7f).SetEase(Ease.OutBack);
         yield return new WaitForSeconds(0.8f);
         SpawnLabel(new Vector3(1.8f, 0.05f, 1.3f), "(P)", new Color(0.6f, 0.8f, 1f));
 
-        // Đường thẳng a song song (P)
+        
         var lineA = MakeLine(new Vector3(-1.5f, 0.8f, 0f), new Vector3(1.5f, 0.8f, 0f), lineAColor);
         SpawnLabel(new Vector3(1.7f, 0.85f, 0f), "a // (P)", lineAColor);
         SpawnLabel(new Vector3(0f, -0.8f, 0f), "[Space] → Bước tiếp", Color.gray, 1.5f);
@@ -66,7 +66,7 @@ public class Bai12Module3 : MonoBehaviour
     IEnumerator Step2()
     {
         _busy = true;
-        // Mặt phẳng (Q) nghiêng, chứa a
+        
         var q = MakeQuad(new Vector3(0, 0.4f, 0), new Vector3(3.5f, 1f, 2f), planeQColor, 30f);
         q.transform.DOScale(new Vector3(3.5f, 1f, 2f), 0.6f).SetEase(Ease.OutBack);
         yield return new WaitForSeconds(0.7f);
@@ -78,7 +78,7 @@ public class Bai12Module3 : MonoBehaviour
     IEnumerator Step3()
     {
         _busy = true;
-        // Giao tuyến b = (Q) ∩ (P)
+        
         var lineB = MakeLine(new Vector3(-1.5f, 0f, -0.6f), new Vector3(1.5f, 0f, -0.6f), lineBColor);
         yield return new WaitForSeconds(0.3f);
         SpawnLabel(new Vector3(1.7f, 0.1f, -0.6f), "b", lineBColor);
@@ -89,7 +89,7 @@ public class Bai12Module3 : MonoBehaviour
     IEnumerator Step4()
     {
         _busy = true;
-        // Mũi tên song song a và b
+        
         SpawnLabel(new Vector3(0f, 0.45f, -0.3f), "a // b  ?", arrowColor: new Color(1f, 1f, 0.3f), 2.5f);
         yield return new WaitForSeconds(0.8f);
         _busy = false;

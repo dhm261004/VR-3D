@@ -34,31 +34,31 @@ public class B10_M3_Visuals : MonoBehaviour
 
     private IEnumerator SpawnModule3Gallery()
     {
-        // Sử dụng localPosition của chính Prefab làm gốc
+        
         Vector3 origin = Vector3.zero;
 
-        // Cách 1: Trái
+        
         yield return StartCoroutine(Build_Way1_3Points(origin + new Vector3(-3.5f, 1.0f, 3.0f)));
         yield return new WaitForSeconds(2.0f); 
         
-        // Cách 2: Giữa, lùi xa
+        
         yield return StartCoroutine(Build_Way2_PointAndLine(origin + new Vector3(0f, 2.5f, 4.5f)));
         yield return new WaitForSeconds(2.0f);
         
-        // Cách 3: Phải
+        
         yield return StartCoroutine(Build_Way3_IntersectingLines(origin + new Vector3(3.5f, 1.0f, 3.0f)));
     }
 
-    // Hàm Fix trợ lý để neo Object vào Prefab
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
         return obj;
     }
 
-    // ==========================================
-    // CÁCH 1: QUA 3 ĐIỂM KHÔNG THẲNG HÀNG
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_Way1_3Points(Vector3 localCenter)
     {
         CreateDynamicTitle(localCenter + new Vector3(0, 1.5f, 0), "CÁCH 1:\nQua 3 điểm không thẳng hàng", whiteCyber);
@@ -84,9 +84,9 @@ public class B10_M3_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // CÁCH 2: QUA 1 ĐƯỜNG THẲNG & 1 ĐIỂM NẰM NGOÀI
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_Way2_PointAndLine(Vector3 localCenter)
     {
         CreateDynamicTitle(localCenter + new Vector3(0, 1.5f, 0), "CÁCH 2:\nQua 1 đường thẳng & 1 điểm nằm ngoài", whiteCyber);
@@ -110,9 +110,9 @@ public class B10_M3_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // CÁCH 3: QUA 2 ĐƯỜNG THẲNG CẮT NHAU
-    // ==========================================
+    
+    
+    
     private IEnumerator Build_Way3_IntersectingLines(Vector3 localCenter)
     {
         CreateDynamicTitle(localCenter + new Vector3(0, 1.5f, 0), "CÁCH 3:\nQua 2 đường thẳng cắt nhau", whiteCyber);
@@ -142,9 +142,9 @@ public class B10_M3_Visuals : MonoBehaviour
         yield return new WaitForSeconds(observeTime);
     }
 
-    // ==========================================
-    // HÀM TIỆN ÍCH
-    // ==========================================
+    
+    
+    
     
     private GameObject BuildConceptualPlane(Vector3 localCenter, float w, float d) {
         GameObject p1 = CreateAnchor(localCenter + new Vector3(-w, 0, -d));

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-// Khai báo thêm thư viện XR
+
 using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-// Dòng này ÉP Unity phải tự động thêm XRGrabInteractable và Rigidbody vào object
+
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(XRGrabInteractable))]
 public class InteractivePoint : MonoBehaviour
@@ -19,7 +19,7 @@ public class InteractivePoint : MonoBehaviour
     {
         _cam = Camera.main;
         
-        // Cấu hình vật lý cơ bản để VR có thể cầm được nhưng không bị rớt
+        
         _rb = GetComponent<Rigidbody>();
         _rb.useGravity = false;
         _rb.isKinematic = true; 
@@ -27,22 +27,22 @@ public class InteractivePoint : MonoBehaviour
 
     void Update()
     {
-        // ==========================================
-        // PHẦN NÀY CHỈ CHẠY TRÊN PC (DÙNG CHUỘT)
-        // Khi đeo kính VR, phần này sẽ tự động bị bỏ qua
-        // ==========================================
+        
+        
+        
+        
         if (Mouse.current == null) return;
 
-        // 1. CHUỘT PHẢI (Kích hoạt Thước đo)
+        
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             if (IsPointerOverMe()) {
-                // MeasurementManager.Instance.SelectPointForMeasurement(this.gameObject);
+                
                 Debug.Log("Đã chọn điểm để đo đạc (Bằng chuột)!");
             }
         }
 
-        // 2. CHUỘT TRÁI (Nhấn xuống để bắt đầu kéo)
+        
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (IsPointerOverMe()) {
@@ -51,13 +51,13 @@ public class InteractivePoint : MonoBehaviour
             }
         }
 
-        // 3. THẢ CHUỘT TRÁI (Dừng kéo)
+        
         if (Mouse.current.leftButton.wasReleasedThisFrame)
         {
             _isDragging = false;
         }
 
-        // 4. KÉO THẢ BẰNG CHUỘT
+        
         if (_isDragging)
         {
             Vector2 mousePos = Mouse.current.position.ReadValue();
@@ -76,14 +76,14 @@ public class InteractivePoint : MonoBehaviour
         return false;
     }
 
-    // ==========================================
-    // PHẦN DÀNH CHO VR (TÍCH HỢP ĐO ĐẠC)
-    // ==========================================
-    // Vì VR không có "Chuột Phải", nên khi tay cầm VR bắn tia laser vào và bóp cò, 
-    // XR Toolkit sẽ tự gọi hàm này nếu bạn móc nó vào sự kiện SelectEntered.
+    
+    
+    
+    
+    
     public void OnVRSelected()
     {
-        // MeasurementManager.Instance.SelectPointForMeasurement(this.gameObject);
+        
         Debug.Log("Đã chọn điểm để đo đạc (Bằng VR Laser)!");
     }
 }

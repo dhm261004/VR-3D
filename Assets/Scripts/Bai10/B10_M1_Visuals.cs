@@ -20,18 +20,18 @@ public class B10_M1_Visuals : MonoBehaviour
     private TextMeshPro _labelB;
     private GameObject _pointA;
     private GameObject _pointB;
-    private float _localPlaneY; // Chuyển sang dùng Local Y
+    private float _localPlaneY; 
 
     IEnumerator Start()
     {
         if (Camera.main) Camera.main.backgroundColor = new Color32(10, 10, 12, 255);
         yield return new WaitForSeconds(1.0f); 
         
-        // Sử dụng local Vector3.zero để làm tâm tại đúng vị trí đặt Prefab
+        
         StartCoroutine(Build_Module1_Concept(Vector3.zero)); 
     }
 
-    // Hàm Fix trợ lý
+    
     private GameObject Fix(GameObject obj)
     {
         if (obj != null) obj.transform.SetParent(this.transform);
@@ -41,11 +41,11 @@ public class B10_M1_Visuals : MonoBehaviour
     private IEnumerator Build_Module1_Concept(Vector3 localCenter)
     {
         _localPlaneY = localCenter.y;
-        // Tạo Title và gán cha
+        
         TextMeshPro title = CreateDynamicTitle(localCenter + new Vector3(0, 1.8f, 0.5f), "KHÁI NIỆM MẶT PHẲNG", edgeCyan);
 
-        // --- PHẦN 1: DỰNG MẶT PHẲNG (P) ---
-        // Sử dụng tọa độ Local để tính toán
+        
+        
         GameObject p1 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localCenter + new Vector3(-1.0f, 0, -0.8f)), Color.clear, "", false));
         GameObject p2 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localCenter + new Vector3(1.0f, 0, -0.8f)), Color.clear, "", false));
         GameObject p3 = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localCenter + new Vector3(1.5f, 0, 0.8f)), Color.clear, "", false));
@@ -65,11 +65,11 @@ public class B10_M1_Visuals : MonoBehaviour
 
         yield return new WaitForSeconds(1f);
 
-        // --- PHẦN 2: HIỆU ỨNG MỞ RỘNG ---
+        
         float spreadX = 3.5f; 
         float spreadZ = 2.5f;
 
-        // Di chuyển bằng LocalPosition để đảm bảo bám theo cha
+        
         p1.transform.DOLocalMove(localCenter + new Vector3(-spreadX, 0, -spreadZ), animSpeed * 2.5f);
         p2.transform.DOLocalMove(localCenter + new Vector3(spreadX, 0, -spreadZ), animSpeed * 2.5f);
         p3.transform.DOLocalMove(localCenter + new Vector3(spreadX + 1f, 0, spreadZ), animSpeed * 2.5f);
@@ -81,7 +81,7 @@ public class B10_M1_Visuals : MonoBehaviour
 
         yield return new WaitForSeconds(animSpeed);
 
-        // --- PHẦN 3: QUAN HỆ ĐIỂM - MẶT PHẲNG ---
+        
         title.text = "QUAN HỆ ĐIỂM VÀ MẶT PHẲNG\n(Hãy thử kéo các điểm)";
         
         _pointA = Fix(GeoFactory.CreatePoint(transform.TransformPoint(localCenter + new Vector3(0.5f, 0, 0f)), ptColor, "A", true));
@@ -110,15 +110,15 @@ public class B10_M1_Visuals : MonoBehaviour
 
     private void UpdatePointLabel(GameObject point, TextMeshPro label, string name)
     {
-        // Sử dụng localPosition để tính toán khoảng cách Y tương đối với Prefab cha
+        
         label.transform.localPosition = point.transform.localPosition + Vector3.up * 0.3f;
         float dist = Mathf.Abs(point.transform.localPosition.y - _localPlaneY);
         
         if (dist < 0.05f) {
-            label.text = name + " thuộc (P)"; // Dùng ký hiệu thuộc toán học cho chuyên nghiệp
+            label.text = name + " thuộc (P)"; 
             label.color = yellowCyber;
         } else {
-            label.text = name + " không thuộc (P)"; // Dùng ký hiệu không thuộc
+            label.text = name + " không thuộc (P)"; 
             label.color = whiteCyber;
         }
     }
